@@ -304,7 +304,7 @@ namespace IsosurfaceGenerator
 		};
 		#endregion TRI_TABLE
 
-		private Voxel[,,] _voxels;
+		private List<Voxel> _voxels = new List<Voxel>();
 		private float _isoValue;
 		private List<Triangle> _triangles = new List<Triangle>();
 		
@@ -315,33 +315,35 @@ namespace IsosurfaceGenerator
 		                     float isoValue
 		                     )
 		{
-			_voxels = new Voxel[sizeX - 1, sizeY - 1, sizeZ - 1];
 			_isoValue = isoValue;
 			
-			for (var x = 0; x < sizeX - 1; x++) {
+			for (var z = 0; z < sizeZ - 1; z++) {
 				for (var y = 0; y < sizeY - 1; y++) {
-					for (var z = 0; z < sizeZ - 1; z++) {
+					for (var x = 0; x < sizeX - 1; x++) {
 						var values = new float[8];
-						values[0] = rawData[x, y, z + 1];
-						values[1] = rawData[x + 1, y, z + 1];
-						values[2] = rawData[x + 1, y, z];
-						values[3] = rawData[x, y, z];
-						values[4] = rawData[x, y + 1, z + 1];
-						values[5] = rawData[x + 1, y + 1, z + 1];
-						values[6] = rawData[x + 1, y + 1, z];
-						values[7] = rawData[x, y + 1, z];
+						values[0] = rawData[z + 1, y, x];
+						values[1] = rawData[z + 1, y, x + 1];
+						values[2] = rawData[z, y, x + 1];
+						values[3] = rawData[z, y, x];
+						values[4] = rawData[z + 1, y + 1, x];
+						values[5] = rawData[z + 1, y + 1, x + 1];
+						values[6] = rawData[z, y + 1, x + 1];
+						values[7] = rawData[z, y + 1, x];
 						
 						var points = new Vec3[8];
-						points[0] = new Vec3(startX + stepX * x, startY + stepY * y, startZ + stepZ * (z + 1));
-						points[1] = new Vec3(startX + stepX * (x + 1), startY + stepY * y, startZ + stepZ * (z + 1));
-						points[2] = new Vec3(startX + stepX * (x + 1), startY + stepY * y, startZ + stepZ * z);
-						points[3] = new Vec3(startX + stepX * x, startY + stepY * y, startZ + stepZ * z);
-						points[4] = new Vec3(startX + stepX * x, startY + stepY * (y + 1), startZ + stepZ * (z + 1));
-						points[5] = new Vec3(startX + stepX * (x + 1), startY + stepY * (y + 1), startZ + stepZ * (z + 1));
-						points[6] = new Vec3(startX + stepX * (x + 1), startY + stepY * (y + 1), startZ + stepZ * z);
-						points[7] = new Vec3(startX + stepX * x, startY + stepY * (y + 1), startZ + stepZ * z);
+						var cx = startX + stepX * x;
+						var cy = startY + stepY * y;
+						var cz = startZ + stepZ * z;
+						points[0] = new Vec3(cx, cy, cz + stepZ);
+						points[1] = new Vec3(cx + stepX, cy, cz + stepZ);
+						points[2] = new Vec3(cx + stepX, cy, cz);
+						points[3] = new Vec3(cx, cy, cz);
+						points[4] = new Vec3(cx, cy + stepX, cz + stepZ);
+						points[5] = new Vec3(cx + stepX, cy + stepY, cz + stepZ);
+						points[6] = new Vec3(cx + stepX, cy + stepY, cz);
+						points[7] = new Vec3(cx, cy + stepY, cz);
 
-						_voxels[x, y, z] = new Voxel(points, values);
+						_voxels.Add(new Voxel(points, values));
 					}
 				}
 			}

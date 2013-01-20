@@ -63,12 +63,12 @@ namespace IsosurfaceGenerator
 			}
 						
 			// Read contents of DAT file
-			RawData = new float[SizeX, SizeY, SizeZ];
+			RawData = new float[SizeZ, SizeY, SizeX];
 			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
 				for (var z = 0; z < SizeZ; z++) {
 					for (var y = 0; y < SizeY; y++) {
 						for (var x = 0; x < SizeX; x++) {
-							RawData[x, y, z] = reader.ReadSingle();
+							RawData[z, y, x] = reader.ReadSingle();
 						}
 					}
 				}
