@@ -304,9 +304,9 @@ namespace IsosurfaceGenerator
 		};
 		#endregion TRI_TABLE
 
-		private List<Voxel> _voxels = new List<Voxel>();
+		private List<Voxel> _voxels;
 		private float _isoValue;
-		private List<Triangle> _triangles = new List<Triangle>();
+		private List<Triangle> _triangles;
 		
 		public MarchingCubes(float startX, float startY, float startZ,
 		                     float stepX, float stepY, float stepZ,
@@ -316,7 +316,9 @@ namespace IsosurfaceGenerator
 		                     )
 		{
 			_isoValue = isoValue;
-			
+			_voxels = new List<Voxel>(sizeX * sizeY * sizeZ);
+			_triangles = new List<Triangle>();
+
 			for (var z = 0; z < sizeZ - 1; z++) {
 				for (var y = 0; y < sizeY - 1; y++) {
 					for (var x = 0; x < sizeX - 1; x++) {
@@ -329,7 +331,7 @@ namespace IsosurfaceGenerator
 						values[5] = rawData[z + 1][y + 1][x + 1];
 						values[6] = rawData[z][y + 1][x + 1];
 						values[7] = rawData[z][y + 1][x];
-						
+
 						var points = new Vec3[8];
 						var cx = startX + stepX * x;
 						var cy = startY + stepY * y;
@@ -410,7 +412,7 @@ namespace IsosurfaceGenerator
 				_triangles.AddRange (generateTriangles (voxel, _isoValue));
 			}
 
-			using (var writer = new System.IO.BinaryWriter(System.IO.File.OpenWrite("test.stl"))) {
+			using (var writer = new BinaryWriter(File.OpenWrite("test.stl"))) {
 				writer.Write (new byte[80]);
 				writer.Write (_triangles.Count);
 
