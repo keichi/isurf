@@ -311,7 +311,7 @@ namespace IsosurfaceGenerator
 		public MarchingCubes(float startX, float startY, float startZ,
 		                     float stepX, float stepY, float stepZ,
 		                     int sizeX, int sizeY, int sizeZ,
-		                     float[,,] rawData,
+		                     float[][][] rawData,
 		                     float isoValue
 		                     )
 		{
@@ -321,14 +321,14 @@ namespace IsosurfaceGenerator
 				for (var y = 0; y < sizeY - 1; y++) {
 					for (var x = 0; x < sizeX - 1; x++) {
 						var values = new float[8];
-						values[0] = rawData[z + 1, y, x];
-						values[1] = rawData[z + 1, y, x + 1];
-						values[2] = rawData[z, y, x + 1];
-						values[3] = rawData[z, y, x];
-						values[4] = rawData[z + 1, y + 1, x];
-						values[5] = rawData[z + 1, y + 1, x + 1];
-						values[6] = rawData[z, y + 1, x + 1];
-						values[7] = rawData[z, y + 1, x];
+						values[0] = rawData[z + 1][y][x];
+						values[1] = rawData[z + 1][y][x + 1];
+						values[2] = rawData[z][y][x + 1];
+						values[3] = rawData[z][y][x];
+						values[4] = rawData[z + 1][y + 1][x];
+						values[5] = rawData[z + 1][y + 1][x + 1];
+						values[6] = rawData[z][y + 1][x + 1];
+						values[7] = rawData[z][y + 1][x];
 						
 						var points = new Vec3[8];
 						var cx = startX + stepX * x;

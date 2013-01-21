@@ -20,7 +20,7 @@ namespace IsosurfaceGenerator
 
 		public float NoDataValue { get; set; }
 		
-		public float[,,] RawData { get; set; }
+		public float[][][] RawData { get; set; }
 
 		private string _ctlFilename;
 		private string _datFilename;
@@ -63,12 +63,14 @@ namespace IsosurfaceGenerator
 			}
 						
 			// Read contents of DAT file
-			RawData = new float[SizeZ, SizeY, SizeX];
+			RawData = new float[SizeZ][][];
 			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
 				for (var z = 0; z < SizeZ; z++) {
+					RawData[z] = new float[SizeY][];
 					for (var y = 0; y < SizeY; y++) {
+						RawData[z][y] = new float [SizeX];
 						for (var x = 0; x < SizeX; x++) {
-							RawData[z, y, x] = reader.ReadSingle();
+							RawData[z][y][x] = reader.ReadSingle();
 						}
 					}
 				}
