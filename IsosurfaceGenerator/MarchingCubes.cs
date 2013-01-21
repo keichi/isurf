@@ -336,7 +336,7 @@ namespace IsosurfaceGenerator
 							startY + stepY * y,
 							startZ + stepZ * z
 						);
-						v.Value = rawData[z][y][x];
+						v.Value = rawData[z, y, x];
 						v.IsInside = v.Value > isoValue;
 						_vertices[i++] = v;
 					}

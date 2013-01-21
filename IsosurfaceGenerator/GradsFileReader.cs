@@ -24,7 +24,7 @@ namespace IsosurfaceGenerator
 			var sizeX = data.SizeX;
 			var sizeY = data.SizeY;
 			var sizeZ = data.SizeZ;
-			var rawData = new float[sizeZ][][];
+			var rawData = new float[sizeZ, sizeY, sizeX];
 			var buf = new byte[sizeX * sizeY * sizeZ * 4];
 
 			// Read contents of DAT file
@@ -32,17 +32,8 @@ namespace IsosurfaceGenerator
 				reader.Read(buf, 0, buf.Length);
 			}
 
-			var offset = 0;
-			for (var z = 0; z < sizeZ; z++) {
-				rawData[z] = new float[sizeY][];
-				for (var y = 0; y < sizeY; y++) {
-					rawData[z][y] = new float [sizeX];
-					for (var x = 0; x < sizeX; x++) {
-						rawData[z][y][x] = BitConverter.ToSingle(buf, offset);
-						offset += 4;
-					}
-				}
-			}
+			Buffer.BlockCopy(buf, 0, rawData, 0, buf.Length);
+
 
 			data.RawData = rawData;
 		}

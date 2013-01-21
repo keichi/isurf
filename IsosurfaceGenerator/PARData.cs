@@ -18,7 +18,7 @@ namespace IsosurfaceGenerator
 		
 		public float NoDataValue { get; set; }
 		
-		public float[][][] RawData { get; set; }
+		public float[,,] RawData { get; set; }
 		
 		public PARData ()
 		{
