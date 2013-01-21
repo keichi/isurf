@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace IsosurfaceGenerator
 {
@@ -24,20 +25,25 @@ namespace IsosurfaceGenerator
 			var sizeY = data.SizeY;
 			var sizeZ = data.SizeZ;
 			var rawData = new float[sizeZ][][];
-			
+			var buf = new byte[sizeX * sizeY * sizeZ * 4];
+
 			// Read contents of DAT file
 			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
-				for (var z = 0; z < sizeZ; z++) {
-					rawData[z] = new float[sizeY][];
-					for (var y = 0; y < sizeY; y++) {
-						rawData[z][y] = new float [sizeX];
-						for (var x = 0; x < sizeX; x++) {
-							rawData[z][y][x] = reader.ReadSingle();
-						}
+				reader.Read(buf, 0, buf.Length);
+			}
+
+			var offset = 0;
+			for (var z = 0; z < sizeZ; z++) {
+				rawData[z] = new float[sizeY][];
+				for (var y = 0; y < sizeY; y++) {
+					rawData[z][y] = new float [sizeX];
+					for (var x = 0; x < sizeX; x++) {
+						rawData[z][y][x] = BitConverter.ToSingle(buf, offset);
+						offset += 4;
 					}
 				}
 			}
-			
+
 			data.RawData = rawData;
 		}
 
