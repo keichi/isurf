@@ -43,6 +43,7 @@
     <Compile Include="Triangle.cs" />
     <Compile Include="PARData.cs" />
     <Compile Include="IMeshExporter.cs" />
+    <Compile Include="STLExporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

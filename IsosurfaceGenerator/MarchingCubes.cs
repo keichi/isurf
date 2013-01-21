@@ -413,39 +413,13 @@ namespace IsosurfaceGenerator
 			return triangles;
 		}
 
-		public void CalculateIsosurface ()
+		public List<Triangle> CalculateIsosurface ()
 		{
 			foreach (var voxel in _voxels) {
 				_triangles.AddRange (generateTriangles (voxel, _isoValue));
 			}
 
-			using (var writer = new BinaryWriter(File.OpenWrite("test.stl"))) {
-				writer.Write (new byte[80]);
-				writer.Write (_triangles.Count);
-
-				foreach (var triangle in _triangles) {
-					var normal = (triangle.Vertex3 - triangle.Vertex1).Cross (triangle.Vertex2 - triangle.Vertex1).Normalize ();
-					writer.Write (normal.X);
-					writer.Write (normal.Y);
-					writer.Write (normal.Z);
-
-					writer.Write (triangle.Vertex1.X);
-					writer.Write (triangle.Vertex1.Y);
-					writer.Write (triangle.Vertex1.Z);
-
-					writer.Write (triangle.Vertex2.X);
-					writer.Write (triangle.Vertex2.Y);
-					writer.Write (triangle.Vertex2.Z);
-
-					writer.Write (triangle.Vertex3.X);
-					writer.Write (triangle.Vertex3.Y);
-					writer.Write (triangle.Vertex3.Z);
-
-					writer.Write ((byte)0);
-					writer.Write ((byte)0);
-				}
-				Console.WriteLine ("Resulted in {0} triangles.", _triangles.Count);
-			}
+			return _triangles;
 		}
 	}
 }

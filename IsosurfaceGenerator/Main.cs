@@ -19,9 +19,14 @@ namespace IsosurfaceGenerator
 			Console.WriteLine("mc cube init -- {0}ms elapsed.", sw.ElapsedMilliseconds);
 			sw.Restart();
 
-			mc.CalculateIsosurface();
+			var mesh = mc.CalculateIsosurface();
 			sw.Stop();
 			Console.WriteLine("mc generate isosurface -- {0}ms elapsed.", sw.ElapsedMilliseconds);
+			sw.Restart();
+
+			var exporter = new STLExporter("test.stl");
+			exporter.Export(mesh);
+			Console.WriteLine("Write mesh data -- {0}ms elapsed.", sw.ElapsedMilliseconds);
 		}
 	}
 }
