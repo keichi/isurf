@@ -2,6 +2,9 @@ using System;
 
 namespace IsosurfaceGenerator
 {
+	/// <summary>
+	/// Measure data of the phased array radar
+	/// </summary>
 	public class PARData
 	{
 		public float StepX { get; set; }

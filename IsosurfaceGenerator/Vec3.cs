@@ -2,10 +2,22 @@ using System;
 
 namespace IsosurfaceGenerator
 {
+	/// <summary>
+	/// A 3-dimensional vector
+	/// </summary>
 	public struct Vec3
 	{
+		/// <summary>
+		/// x-component
+		/// </summary>
 		public float X;
+		/// <summary>
+		/// y-component
+		/// </summary>
 		public float Y;
+		/// <summary>
+		/// z-component
+		/// </summary>
 		public float Z;
 		
 		public Vec3(float x, float y, float z) {

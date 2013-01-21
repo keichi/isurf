@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 
 namespace IsosurfaceGenerator
 {
+	/// <summary>
+	/// GrADS file parser/reader
+	/// </summary>
 	public class GradsFileReader
 	{
 		private string _ctlFilename;
