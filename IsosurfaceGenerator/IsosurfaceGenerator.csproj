@@ -42,6 +42,7 @@
     <Compile Include="Vec3.cs" />
     <Compile Include="Triangle.cs" />
     <Compile Include="PARData.cs" />
+    <Compile Include="IMeshExporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
