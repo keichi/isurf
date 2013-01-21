@@ -308,17 +308,23 @@ namespace IsosurfaceGenerator
 		private float _isoValue;
 		private List<Triangle> _triangles;
 		
-		public MarchingCubes(float startX, float startY, float startZ,
-		                     float stepX, float stepY, float stepZ,
-		                     int sizeX, int sizeY, int sizeZ,
-		                     float[][][] rawData,
-		                     float isoValue
-		                     )
+		public MarchingCubes(PARData data, float isoValue)
 		{
+			var sizeX = data.SizeX;
+			var sizeY = data.SizeY;
+			var sizeZ = data.SizeZ;
+			var stepX = data.StepX;
+			var stepY = data.StepY;
+			var stepZ = data.StepZ;
+			var startX = data.StartX;
+			var startY = data.StartY;
+			var startZ = data.StartZ;
+			var rawData = data.RawData;
+
 			_isoValue = isoValue;
 			_voxels = new Voxel[(sizeX - 1) * (sizeY - 1) * (sizeZ - 1)];
 			_triangles = new List<Triangle>();
-
+			
 			for (var z = 0; z < sizeZ - 1; z++) {
 				for (var y = 0; y < sizeY - 1; y++) {
 					for (var x = 0; x < sizeX - 1; x++) {

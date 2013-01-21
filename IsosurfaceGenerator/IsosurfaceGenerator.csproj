@@ -41,6 +41,7 @@
     <Compile Include="Voxel.cs" />
     <Compile Include="Vec3.cs" />
     <Compile Include="Triangle.cs" />
+    <Compile Include="PARData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,33 +6,45 @@ namespace IsosurfaceGenerator
 {
 	public class GradsFileReader
 	{
-		public float StepX { get; set; }
-		public float StepY { get; set; }
-		public float StepZ { get; set; }
-
-		public float StartX { get; set; }
-		public float StartY { get; set; }
-		public float StartZ { get; set; }
-
-		public int SizeX { get; set; }
-		public int SizeY { get; set; }
-		public int SizeZ { get; set; }
-
-		public float NoDataValue { get; set; }
-		
-		public float[][][] RawData { get; set; }
-
 		private string _ctlFilename;
 		private string _datFilename;
 		
-		public GradsFileReader (string ctlFilename, string datFilename)
+		public GradsFileReader (string ctlFilename)
 		{
 			_ctlFilename = ctlFilename;
+		}
+
+		public GradsFileReader (string ctlFilename, string datFilename) : this(ctlFilename)
+		{
 			_datFilename = datFilename;
 		}
 
-		public void ReadData ()
+		private void readDataset(string datFilename, PARData data) {
+			var sizeX = data.SizeX;
+			var sizeY = data.SizeY;
+			var sizeZ = data.SizeZ;
+			var rawData = new float[sizeZ][][];
+			
+			// Read contents of DAT file
+			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
+				for (var z = 0; z < sizeZ; z++) {
+					rawData[z] = new float[sizeY][];
+					for (var y = 0; y < sizeY; y++) {
+						rawData[z][y] = new float [sizeX];
+						for (var x = 0; x < sizeX; x++) {
+							rawData[z][y][x] = reader.ReadSingle();
+						}
+					}
+				}
+			}
+			
+			data.RawData = rawData;
+		}
+
+		public PARData ReadData ()
 		{
+			var data = new PARData();
+
 			// Read contents of CTL file
 			using (var reader = new StreamReader(_ctlFilename)) {
 				string line;
@@ -41,40 +53,40 @@ namespace IsosurfaceGenerator
 					var cols = regex.Split(line);
 					switch (cols[0].ToUpper()) {
 					case "XDEF":
-						SizeX = int.Parse(cols[1]);
-						StartX = float.Parse(cols[3]);
-						StepX = float.Parse(cols[4]);
+						data.SizeX = int.Parse(cols[1]);
+						data.StartX = float.Parse(cols[3]);
+						data.StepX = float.Parse(cols[4]);
 						break;
 					case "YDEF":
-						SizeY = int.Parse(cols[1]);
-						StartY = float.Parse(cols[3]);
-						StepY = float.Parse(cols[4]);
+						data.SizeY = int.Parse(cols[1]);
+						data.StartY = float.Parse(cols[3]);
+						data.StepY = float.Parse(cols[4]);
 						break;
 					case "ZDEF":
-						SizeZ = int.Parse(cols[1]);
-						StartZ = float.Parse(cols[3]);
-						StepZ = float.Parse(cols[4]);
+						data.SizeZ = int.Parse(cols[1]);
+						data.StartZ = float.Parse(cols[3]);
+						data.StepZ = float.Parse(cols[4]);
 						break;
 					case "UNDEF":
-						NoDataValue = float.Parse(cols[1]);
+						data.NoDataValue = float.Parse(cols[1]);
+						break;
+					case "DSET":
+						if (!String.IsNullOrEmpty(_datFilename)) break;
+						var dset = cols[1];
+						if (dset.StartsWith("^")) {
+							dset = dset.Substring(1);
+							_datFilename = Path.Combine(Path.GetDirectoryName(_ctlFilename), dset);
+						} else {
+							_datFilename = dset;
+						}
 						break;
 					}
 				}
 			}
-						
-			// Read contents of DAT file
-			RawData = new float[SizeZ][][];
-			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
-				for (var z = 0; z < SizeZ; z++) {
-					RawData[z] = new float[SizeY][];
-					for (var y = 0; y < SizeY; y++) {
-						RawData[z][y] = new float [SizeX];
-						for (var x = 0; x < SizeX; x++) {
-							RawData[z][y][x] = reader.ReadSingle();
-						}
-					}
-				}
-			}
+
+			readDataset(_datFilename, data);
+
+			return data;
 		}
 	}
 }
