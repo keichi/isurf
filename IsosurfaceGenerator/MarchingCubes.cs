@@ -324,8 +324,9 @@ namespace IsosurfaceGenerator
 			var startZ = data.StartZ;
 			var rawData = data.RawData;
 
-			_vertices = new Vertex[_sizeX * _sizeX * _sizeY];
+			_vertices = new Vertex[_sizeX * _sizeY * _sizeZ];
 
+			var i = 0;
 			for (var z = 0; z < _sizeZ ; z++) {
 				for (var y = 0; y < _sizeY; y++) {
 					for (var x = 0; x < _sizeX; x++) {
@@ -337,7 +338,7 @@ namespace IsosurfaceGenerator
 						);
 						v.Value = rawData[z][y][x];
 						v.IsInside = v.Value > isoValue;
-						_vertices[x + y * _sizeX + z * _sizeX * _sizeY] = v;
+						_vertices[i++] = v;
 					}
 				}
 			}
