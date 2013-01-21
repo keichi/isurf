@@ -2,7 +2,7 @@ using System;
 
 namespace IsosurfaceGenerator
 {
-	public class Vertex
+	public struct Vertex
 	{
 		public Vec3 Point;
 		public float Value;
