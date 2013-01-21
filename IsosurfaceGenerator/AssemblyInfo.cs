@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("IsosurfaceGenerator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Generates isosurface mesh from density data")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Keichi Takahashi")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Keichi")]
+[assembly: AssemblyCopyright("Copyright (C) 2013 Keichi Takahashi. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
