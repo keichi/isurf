@@ -4,9 +4,9 @@ namespace IsosurfaceGenerator
 {
 	public class Vertex
 	{
-		public Vec3 Point { get; set; }
-		public float Value { get; set; }
-		public bool IsInside { get; set; }
+		public Vec3 Point;
+		public float Value;
+		public bool IsInside;
 
 		public static Vertex Interpolate(Vertex v1, Vertex v2, float isoValue) {
 			if (Math.Abs(isoValue - v1.Value) < 0.00001f) {
