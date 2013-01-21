@@ -304,7 +304,7 @@ namespace IsosurfaceGenerator
 		};
 		#endregion TRI_TABLE
 
-		private List<Voxel> _voxels;
+		private Voxel[] _voxels;
 		private float _isoValue;
 		private List<Triangle> _triangles;
 		
@@ -316,7 +316,7 @@ namespace IsosurfaceGenerator
 		                     )
 		{
 			_isoValue = isoValue;
-			_voxels = new List<Voxel>(sizeX * sizeY * sizeZ);
+			_voxels = new Voxel[(sizeX - 1) * (sizeY - 1) * (sizeZ - 1)];
 			_triangles = new List<Triangle>();
 
 			for (var z = 0; z < sizeZ - 1; z++) {
@@ -345,7 +345,8 @@ namespace IsosurfaceGenerator
 						points[6] = new Vec3(cx + stepX, cy + stepY, cz);
 						points[7] = new Vec3(cx, cy + stepY, cz);
 
-						_voxels.Add(new Voxel(points, values));
+						_voxels[x + y * (sizeX - 1) + z * (sizeX - 1) * (sizeY - 1)].Points = points;
+						_voxels[x + y * (sizeX - 1) + z * (sizeX - 1) * (sizeY - 1)].Values = values;
 					}
 				}
 			}
