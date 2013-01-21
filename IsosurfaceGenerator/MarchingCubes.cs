@@ -311,7 +311,7 @@ namespace IsosurfaceGenerator
 		private int _sizeXY;
 		private float _isoValue;
 
-		public MarchingCubes(PARData data, float isoValue)
+		public MarchingCubes (PARData data, float isoValue)
 		{
 			_sizeX = data.SizeX;
 			_sizeY = data.SizeY;
@@ -329,20 +329,25 @@ namespace IsosurfaceGenerator
 			_vertices = new Vertex[_sizeX * _sizeY * _sizeZ];
 
 			var i = 0;
-			for (var z = 0; z < _sizeZ ; z++) {
-				for (var y = 0; y < _sizeY; y++) {
-					for (var x = 0; x < _sizeX; x++) {
-						var v = new Vertex();
-						v.Point = new Vec3(
+			unsafe {
+			fixed (float* ptr = rawData) {
+				for (var z = 0; z < _sizeZ; z++) {
+					for (var y = 0; y < _sizeY; y++) {
+						for (var x = 0; x < _sizeX; x++) {
+							var v = new Vertex ();
+							v.Point = new Vec3 (
 							startX + stepX * x,
 							startY + stepY * y,
 							startZ + stepZ * z
-						);
-						v.Value = rawData[z, y, x];
-						v.IsInside = v.Value > isoValue;
-						_vertices[i++] = v;
+							);
+							v.Value = ptr[i];
+							v.IsInside = v.Value > isoValue;
+							_vertices [i] = v;
+							i++;
+						}
 					}
 				}
+			}
 			}
 		}
 
