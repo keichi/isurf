@@ -6,10 +6,13 @@ namespace IsosurfaceGenerator
 	{
 		public static void Main (string[] args)
 		{
-			Console.WriteLine("Input data reading ...");
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
 			var reader = new GradsFileReader("pawr3D_20120722-180020.ctl", "pawr3D_20120722-180020.dat");
 			reader.ReadData();
-			Console.WriteLine("Successfully read !");
+			sw.Stop();
+			Console.WriteLine("Grads file read -- {0}ms elapsed.", sw.ElapsedMilliseconds);
+			sw.Restart();
 
 			var mc = new MarchingCubes(reader.StartX,
 			                           reader.StartY,
@@ -21,12 +24,15 @@ namespace IsosurfaceGenerator
 			                           reader.SizeY,
 			                           reader.SizeZ,
 			                           reader.RawData,
-			                           45.0f
+			                           30.0f
 			                           );
+			sw.Stop();
+			Console.WriteLine("mc cube init -- {0}ms elapsed.", sw.ElapsedMilliseconds);
+			sw.Restart();
 
-			Console.WriteLine("Calculating iso surface ...");
 			mc.CalculateIsosurface();
-			Console.WriteLine("Successfully calculated !");
+			sw.Stop();
+			Console.WriteLine("mc generate isosurface -- {0}ms elapsed.", sw.ElapsedMilliseconds);
 		}
 	}
 }
