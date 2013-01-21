@@ -45,7 +45,7 @@ namespace IsosurfaceGenerator
 
 		#region TRI_TABLE
 		private static readonly int[][] TRI_TABLE = new int[][] {
-			new int[] {-1},
+			new int[] {},
 			new int[] {0, 8, 3},
 			new int[] {0, 1, 9},
 			new int[] {1, 8, 3, 9, 8, 1},
@@ -304,15 +304,18 @@ namespace IsosurfaceGenerator
 		};
 		#endregion TRI_TABLE
 
-		private Voxel[] _voxels;
+		private Vertex[] _vertices;
+		private int _sizeX;
+		private int _sizeY;
+		private int _sizeZ;
 		private float _isoValue;
-		private List<Triangle> _triangles;
-		
+
 		public MarchingCubes(PARData data, float isoValue)
 		{
-			var sizeX = data.SizeX;
-			var sizeY = data.SizeY;
-			var sizeZ = data.SizeZ;
+			_sizeX = data.SizeX;
+			_sizeY = data.SizeY;
+			_sizeZ = data.SizeZ;
+			_isoValue = isoValue;
 			var stepX = data.StepX;
 			var stepY = data.StepY;
 			var stepZ = data.StepZ;
@@ -321,105 +324,129 @@ namespace IsosurfaceGenerator
 			var startZ = data.StartZ;
 			var rawData = data.RawData;
 
-			_isoValue = isoValue;
-			_voxels = new Voxel[(sizeX - 1) * (sizeY - 1) * (sizeZ - 1)];
-			_triangles = new List<Triangle>();
-			
-			for (var z = 0; z < sizeZ - 1; z++) {
-				for (var y = 0; y < sizeY - 1; y++) {
-					for (var x = 0; x < sizeX - 1; x++) {
-						var values = new float[8];
-						values[0] = rawData[z + 1][y][x];
-						values[1] = rawData[z + 1][y][x + 1];
-						values[2] = rawData[z][y][x + 1];
-						values[3] = rawData[z][y][x];
-						values[4] = rawData[z + 1][y + 1][x];
-						values[5] = rawData[z + 1][y + 1][x + 1];
-						values[6] = rawData[z][y + 1][x + 1];
-						values[7] = rawData[z][y + 1][x];
+			_vertices = new Vertex[_sizeX * _sizeX * _sizeY];
 
-						var points = new Vec3[8];
-						var cx = startX + stepX * x;
-						var cy = startY + stepY * y;
-						var cz = startZ + stepZ * z;
-						points[0] = new Vec3(cx, cy, cz + stepZ);
-						points[1] = new Vec3(cx + stepX, cy, cz + stepZ);
-						points[2] = new Vec3(cx + stepX, cy, cz);
-						points[3] = new Vec3(cx, cy, cz);
-						points[4] = new Vec3(cx, cy + stepX, cz + stepZ);
-						points[5] = new Vec3(cx + stepX, cy + stepY, cz + stepZ);
-						points[6] = new Vec3(cx + stepX, cy + stepY, cz);
-						points[7] = new Vec3(cx, cy + stepY, cz);
-
-						_voxels[x + y * (sizeX - 1) + z * (sizeX - 1) * (sizeY - 1)].Points = points;
-						_voxels[x + y * (sizeX - 1) + z * (sizeX - 1) * (sizeY - 1)].Values = values;
+			for (var z = 0; z < _sizeZ ; z++) {
+				for (var y = 0; y < _sizeY; y++) {
+					for (var x = 0; x < _sizeX; x++) {
+						var v = new Vertex();
+						v.Point = new Vec3(
+							startX + stepX * x,
+							startY + stepY * y,
+							startZ + stepZ * z
+						);
+						v.Value = rawData[z][y][x];
+						v.IsInside = v.Value > isoValue;
+						_vertices[x + y * _sizeX + z * _sizeX * _sizeY] = v;
 					}
 				}
 			}
 		}
 
-		private List<Triangle> generateTriangles(Voxel voxel, float isoValue) {
-			var lookup = 0;
-			var triangles = new List<Triangle>();
-			
-			if (voxel.Values[0] < isoValue) lookup |= 1;
-			if (voxel.Values[1] < isoValue) lookup |= 2;
-			if (voxel.Values[2] < isoValue) lookup |= 4;
-			if (voxel.Values[3] < isoValue) lookup |= 8;
-			if (voxel.Values[4] < isoValue) lookup |= 16;
-			if (voxel.Values[5] < isoValue) lookup |= 32;
-			if (voxel.Values[6] < isoValue) lookup |= 64;
-			if (voxel.Values[7] < isoValue) lookup |= 128;
-			
-			if (lookup == 0 || lookup == 255) return triangles;
-			
-			var vertlist = new Vec3[12];
-			if ((EDGE_TABLE[lookup] & 1) > 0)
-				vertlist[0] = Vec3.Interpolate(isoValue, voxel.Points[0], voxel.Points[1], voxel.Values[0], voxel.Values[1]);
-			if ((EDGE_TABLE[lookup] & 2) > 0)
-				vertlist[1] = Vec3.Interpolate(isoValue, voxel.Points[1], voxel.Points[2], voxel.Values[1], voxel.Values[2]);
-			if ((EDGE_TABLE[lookup] & 4) > 0)
-				vertlist[2] = Vec3.Interpolate(isoValue, voxel.Points[2], voxel.Points[3], voxel.Values[2], voxel.Values[3]);
-			if ((EDGE_TABLE[lookup] & 8) > 0)
-				vertlist[3] = Vec3.Interpolate(isoValue, voxel.Points[3], voxel.Points[0], voxel.Values[3], voxel.Values[0]);
-			if ((EDGE_TABLE[lookup] & 16) > 0)
-				vertlist[4] = Vec3.Interpolate(isoValue, voxel.Points[4], voxel.Points[5], voxel.Values[4], voxel.Values[5]);
-			if ((EDGE_TABLE[lookup] & 32) > 0)
-				vertlist[5] = Vec3.Interpolate(isoValue, voxel.Points[5], voxel.Points[6], voxel.Values[5], voxel.Values[6]);
-			if ((EDGE_TABLE[lookup] & 64) > 0)
-				vertlist[6] = Vec3.Interpolate(isoValue, voxel.Points[6], voxel.Points[7], voxel.Values[6], voxel.Values[7]);
-			if ((EDGE_TABLE[lookup] & 128) > 0)
-				vertlist[7] = Vec3.Interpolate(isoValue, voxel.Points[7], voxel.Points[4], voxel.Values[7], voxel.Values[4]);
-			if ((EDGE_TABLE[lookup] & 256) > 0)
-				vertlist[8] = Vec3.Interpolate(isoValue, voxel.Points[0], voxel.Points[4], voxel.Values[0], voxel.Values[4]);
-			if ((EDGE_TABLE[lookup] & 512) > 0)
-				vertlist[9] = Vec3.Interpolate(isoValue, voxel.Points[1], voxel.Points[5], voxel.Values[1], voxel.Values[5]);
-			if ((EDGE_TABLE[lookup] & 1024) > 0)
-				vertlist[10] = Vec3.Interpolate(isoValue, voxel.Points[2], voxel.Points[6], voxel.Values[2], voxel.Values[6]);
-			if ((EDGE_TABLE[lookup] & 2048) > 0)
-				vertlist[11] = Vec3.Interpolate(isoValue, voxel.Points[3], voxel.Points[7], voxel.Values[3], voxel.Values[7]);
-
-			for (var i = 0; i < TRI_TABLE[lookup].Length; i += 3)
-			{
-				triangles.Add(
-					new Triangle(
-					vertlist[TRI_TABLE[lookup][i]],
-					vertlist[TRI_TABLE[lookup][i + 1]],
-					vertlist[TRI_TABLE[lookup][i + 2]]
-					)
-				);
-			}
-			
-			return triangles;
-		}
-
 		public List<Triangle> CalculateIsosurface ()
 		{
-			foreach (var voxel in _voxels) {
-				_triangles.AddRange (generateTriangles (voxel, _isoValue));
+			var triangles = new List<Triangle>();
+			var vertlist = new Vertex[12];
+
+			for (var z = 0; z < _sizeZ - 1; z++) {
+				for (var y = 0; y < _sizeY - 1; y++) {
+					for (var x = 0; x < _sizeX - 1; x++) {
+						var lookup = 0;
+						var index = x + y * _sizeX + z * _sizeX * _sizeY;
+
+						// 7 -- x + y*_sizeY + z * _sizeX * _sizeY
+						if (_vertices[index].IsInside) lookup |= 128;
+						// 6 -- (x + 1) + y*_sizeY + z * _sizeX * _sizeY
+						if (_vertices[index+1].IsInside) lookup |= 64;
+						// 2 -- (x + 1) + (y + 1)*_sizeY + z * _sizeX * _sizeY
+						if (_vertices[index+1+_sizeX].IsInside) lookup |= 4;
+						// 3 -- x + (y + 1)*_sizeY + z * _sizeX * _sizeY
+						if (_vertices[index + _sizeX].IsInside) lookup |= 8;
+						// 4 -- x + y*_sizeY + (z + 1) * _sizeX * _sizeY
+						if (_vertices[index + (_sizeX * _sizeY)].IsInside) lookup |= 16;
+						// 5 -- (x + 1) + y*_sizeY + (z + 1) * _sizeX * _sizeY
+						if (_vertices[index + 1 + (_sizeX * _sizeY)].IsInside) lookup |= 32;
+						// 1 -- (x + 1) + (y + 1)*_sizeY + (z + 1) * _sizeX * _sizeY
+						if (_vertices[index + 1 + _sizeX + (_sizeX * _sizeY)].IsInside) lookup |= 2;
+						// 0 -- x + (y + 1)*_sizeY + (z + 1) * _sizeX * _sizeY
+						if (_vertices[index + _sizeX + (_sizeX * _sizeY)].IsInside) lookup |= 1;
+						
+						/* hvis ikke alle punktene er utenfor eller innenfor, så vil vi se nærmere på ting */
+						if ((lookup != 0) && (lookup != 255))
+						{
+							// 0 - 1
+							if ((EDGE_TABLE[lookup] & 1) != 0) 
+								vertlist[0]= Vertex.Interpolate(_vertices[index + _sizeX + (_sizeX * _sizeY)],
+																		_vertices[index + 1 + _sizeY + (_sizeX * _sizeY)], _isoValue);
+							
+							// 1 - 2
+							if ((EDGE_TABLE[lookup] & 2) != 0) 
+								vertlist[1] = Vertex.Interpolate(_vertices[index + 1 + _sizeX + (_sizeX * _sizeY)],
+								                                       _vertices[index + 1 + _sizeX], _isoValue);
+							
+							// 2 - 3
+							if ((EDGE_TABLE[lookup] & 4) != 0) 
+								vertlist[2] = Vertex.Interpolate(_vertices[index + 1 + _sizeX],
+								                                  _vertices[index + _sizeX], _isoValue);
+							
+							// 3 - 0
+							if ((EDGE_TABLE[lookup] & 8) != 0) 
+								vertlist[3] = Vertex.Interpolate(_vertices[index + _sizeX],
+								                                  _vertices[index + _sizeX + (_sizeX * _sizeY)], _isoValue);
+							
+							// 4 - 5
+							if ((EDGE_TABLE[lookup] & 16) != 0) 
+								vertlist[4] = Vertex.Interpolate(_vertices[index + (_sizeX * _sizeY)],
+								                                  _vertices[index + 1 + (_sizeX * _sizeY)], _isoValue);
+							
+							// 5 - 6
+							if ((EDGE_TABLE[lookup] & 32) != 0) 
+								vertlist[5] = Vertex.Interpolate(_vertices[index + 1 + (_sizeX * _sizeY)],
+								                                  _vertices[index + 1], _isoValue);
+							
+							// 6 - 7
+							if ((EDGE_TABLE[lookup] & 64) != 0) 
+								vertlist[6] = Vertex.Interpolate(_vertices[index + 1],
+								                                  _vertices[index], _isoValue);
+							
+							// 7 - 4
+							if ((EDGE_TABLE[lookup] & 128) != 0) 
+								vertlist[7] = Vertex.Interpolate(_vertices[index],
+								                                  _vertices[index + (_sizeX * _sizeY)], _isoValue);
+							
+							// 0 - 4
+							if ((EDGE_TABLE[lookup] & 256) != 0)
+								vertlist[8] = Vertex.Interpolate(_vertices[index + _sizeX + (_sizeX * _sizeY)],
+								                                  _vertices[index + (_sizeX * _sizeY)], _isoValue);
+							
+							// 1 - 5
+							if ((EDGE_TABLE[lookup] & 512) != 0) 
+								vertlist[9] = Vertex.Interpolate(_vertices[index + 1 + _sizeX + (_sizeX * _sizeY)],
+								                                  _vertices[index + 1 + (_sizeX * _sizeY)], _isoValue);
+							
+							// 2 - 6
+							if ((EDGE_TABLE[lookup] & 1024) != 0) 
+								vertlist[10] = Vertex.Interpolate(_vertices[index + 1 + _sizeX],
+								                                   _vertices[index + 1], _isoValue);
+							
+							// 3 - 7
+							if ((EDGE_TABLE[lookup] & 2048) != 0) 
+								vertlist[11] = Vertex.Interpolate(_vertices[index + _sizeX],
+								                                   _vertices[index], _isoValue);
+
+							for (var i = 0; i < TRI_TABLE[lookup].Length; i += 3) {
+								triangles.Add(new Triangle(
+									vertlist[TRI_TABLE[lookup][i]].Point,
+									vertlist[TRI_TABLE[lookup][i + 1]].Point,
+									vertlist[TRI_TABLE[lookup][i + 2]].Point
+								));
+							}
+						}
+					}
+				}
 			}
 
-			return _triangles;
+			return triangles;
 		}
 	}
 }
