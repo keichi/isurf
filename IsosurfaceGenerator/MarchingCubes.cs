@@ -336,15 +336,13 @@ namespace IsosurfaceGenerator
 				for (var z = 0; z < _sizeZ; z++) {
 					for (var y = 0; y < _sizeY; y++) {
 						for (var x = 0; x < _sizeX; x++) {
-							var v = new Vertex ();
-							v.Point = new Vec3 (
-							startX + stepX * x,
-							startY + stepY * y,
-							startZ + stepZ * z
+							_vertices[i].Point = new Vec3 (
+								startX + stepX * x,
+								startY + stepY * y,
+								startZ + stepZ * z
 							);
-							v.Value = ptr[i];
-							v.IsInside = v.Value > isoValue;
-							_vertices [i] = v;
+							_vertices[i].Value = ptr[i];
+							_vertices[i].IsInside = ptr[i] > isoValue;
 							i++;
 						}
 					}
