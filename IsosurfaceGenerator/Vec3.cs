@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace IsosurfaceGenerator
 {
 	/// <summary>
 	/// A 3-dimensional vector
 	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Vec3
 	{
 		/// <summary>
