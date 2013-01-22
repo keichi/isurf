@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace IsosurfaceGenerator
+namespace IsosurfaceGenerator.Utils
 {
 	/// <summary>
 	/// A 3-dimensional vector

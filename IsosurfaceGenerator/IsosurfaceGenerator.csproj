@@ -40,12 +40,16 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GradsFileReader.cs" />
     <Compile Include="MarchingCubes.cs" />
-    <Compile Include="Vec3.cs" />
-    <Compile Include="Triangle.cs" />
     <Compile Include="PARData.cs" />
-    <Compile Include="IMeshExporter.cs" />
-    <Compile Include="STLExporter.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="Utils\Vec3.cs" />
+    <Compile Include="Utils\Vertex.cs" />
+    <Compile Include="Utils\Triangle.cs" />
+    <Compile Include="Exporter\IMeshExporter.cs" />
+    <Compile Include="Exporter\STLExporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Utils\" />
+    <Folder Include="Exporter\" />
+  </ItemGroup>
 </Project>

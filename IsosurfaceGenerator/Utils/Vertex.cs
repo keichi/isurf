@@ -1,6 +1,6 @@
 using System;
 
-namespace IsosurfaceGenerator
+namespace IsosurfaceGenerator.Utils
 {
 	public struct Vertex
 	{

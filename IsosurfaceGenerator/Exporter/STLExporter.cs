@@ -3,7 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace IsosurfaceGenerator
+using IsosurfaceGenerator.Utils;
+
+namespace IsosurfaceGenerator.Exporter
 {
 	public class STLExporter : IMeshExporter
 	{

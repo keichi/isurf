@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace IsosurfaceGenerator
+using IsosurfaceGenerator.Utils;
+
+namespace IsosurfaceGenerator.Exporter
 {
 	/// <summary>
 	/// Interface of mesh exporters

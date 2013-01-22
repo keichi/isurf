@@ -1,5 +1,8 @@
 using System;
 
+using IsosurfaceGenerator.Utils;
+using IsosurfaceGenerator.Exporter;
+
 namespace IsosurfaceGenerator
 {
 	class MainClass
