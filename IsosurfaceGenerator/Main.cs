@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 
 using IsosurfaceGenerator.Utils;
 using IsosurfaceGenerator.Exporter;
@@ -9,27 +11,44 @@ namespace IsosurfaceGenerator
 	{
 		public static void Main (string[] args)
 		{
+			Console.WriteLine("Isosurface Generator {0}\n{1}\n",
+			                  Assembly.GetExecutingAssembly().GetName().Version,
+			                  ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute))).Copyright
+			                  );
+
 			var sw = new System.Diagnostics.Stopwatch();
+			if (args.Length < 1 || String.IsNullOrWhiteSpace(args[0])) {
+				Console.WriteLine("Please specify a GrADS CTL file.");
+				return;
+			}
+			if (args.Length < 2 || String.IsNullOrWhiteSpace(args[1])) {
+				Console.WriteLine("Please specify the value you want generate the isosurface.");
+				return;
+			}
+			var ctlFilename = args[0];
+			var meshFilename = Path.GetFileNameWithoutExtension(ctlFilename) + ".stl";
+			var isoValue = float.Parse(args[1]);
+
 			sw.Start();
-			var reader = new GradsFileReader("pawr3D_20120722-180020.ctl");
+			var reader = new GradsFileReader(ctlFilename);
 			var data = reader.ReadData();
 			sw.Stop();
-			Console.WriteLine("Grads file read -- {0}ms elapsed.", sw.ElapsedMilliseconds);
-			sw.Restart();
+			Console.WriteLine("[1/4] Read/parse GrADS file \"{1}\" ({0}[ms])", sw.ElapsedMilliseconds, ctlFilename);
 
-			var mc = new MarchingCubes(data, 30.0f);
+			sw.Restart();
+			var mc = new MarchingCubes(data, isoValue);
 			sw.Stop();
-			Console.WriteLine("mc cube init -- {0}ms elapsed.", sw.ElapsedMilliseconds);
-			sw.Restart();
+			Console.WriteLine("[2/4] Initializing isosurface generator ({0}[ms])", sw.ElapsedMilliseconds);
 
+			sw.Restart();
 			var mesh = mc.CalculateIsosurface();
 			sw.Stop();
-			Console.WriteLine("mc generate isosurface -- {0}ms elapsed.", sw.ElapsedMilliseconds);
-			sw.Restart();
+			Console.WriteLine("[3/4] Generating isosurface of {1} ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
 
-			var exporter = new STLExporter("test.stl");
+			sw.Restart();
+			var exporter = new STLExporter(meshFilename);
 			exporter.Export(mesh);
-			Console.WriteLine("Write mesh data -- {0}ms elapsed.", sw.ElapsedMilliseconds);
+			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\" ({0}[ms])", sw.ElapsedMilliseconds, meshFilename);
 		}
 	}
 }
