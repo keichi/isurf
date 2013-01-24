@@ -33,22 +33,25 @@ namespace IsosurfaceGenerator
 			var reader = new GradsFileReader(ctlFilename);
 			var data = reader.ReadData();
 			sw.Stop();
-			Console.WriteLine("[1/4] Read/parse GrADS file \"{1}\" ({0}[ms])", sw.ElapsedMilliseconds, ctlFilename);
+			Console.WriteLine("[1/4] Read/parse GrADS file \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, ctlFilename);
 
 			sw.Restart();
 			var mc = new MarchingCubes(data, isoValue);
 			sw.Stop();
-			Console.WriteLine("[2/4] Initializing isosurface generator ({0}[ms])", sw.ElapsedMilliseconds);
+			Console.WriteLine("[2/4] Initializing isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
 
 			sw.Restart();
 			var mesh = mc.CalculateIsosurface();
 			sw.Stop();
-			Console.WriteLine("[3/4] Generating isosurface of {1} ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
+			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
 
 			sw.Restart();
 			var exporter = new STLExporter(meshFilename);
 			exporter.Export(mesh);
-			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\" ({0}[ms])", sw.ElapsedMilliseconds, meshFilename);
+			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, meshFilename);
+
+			Console.WriteLine();
+			Console.WriteLine("Resulted in {0} triangles.", mesh.Count);
 		}
 	}
 }
