@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="Utils\Triangle.cs" />
     <Compile Include="Exporter\IMeshExporter.cs" />
     <Compile Include="Exporter\STLExporter.cs" />
+    <Compile Include="VectorTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
