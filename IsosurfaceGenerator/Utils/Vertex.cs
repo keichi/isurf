@@ -21,13 +21,14 @@ namespace IsosurfaceGenerator.Utils
 			
 			var diff = (isoValue -  v1.Value) / (v2.Value - v1.Value);
 
-			var v = new Vertex();
+			Vertex v;
 			v.Point = new Vec3(
 				v1.Point.X  + (v2.Point.X - v1.Point.X) * diff,
 				v1.Point.Y + (v2.Point.Y - v1.Point.Y) * diff,
 				v1.Point.Z + (v2.Point.Z - v1.Point.Z) * diff
 			);
 			v.Value = (v1.Value + v2.Value) * 0.5f;
+			v.IsInside = false;
 
 			return v;
 		}
