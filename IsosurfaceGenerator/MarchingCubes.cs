@@ -6,7 +6,7 @@ using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator
 {
-	public class MarchingCubes
+	public class MarchingCubes : IDisposable
 	{
 		#region EDGE_TABLE
 		private static readonly int[] EDGE_TABLE = new int [] {
@@ -446,6 +446,11 @@ namespace IsosurfaceGenerator
 			}
 
 			return triangles;
+		}
+
+		public void Dispose()
+		{
+			_vertices = new Vertex[1];
 		}
 	}
 }
