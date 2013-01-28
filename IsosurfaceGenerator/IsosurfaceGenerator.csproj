@@ -49,6 +49,7 @@
     <Compile Include="Exporter\IMeshExporter.cs" />
     <Compile Include="Exporter\STLExporter.cs" />
     <Compile Include="VectorTest.cs" />
+    <Compile Include="Exporter\OBJExporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

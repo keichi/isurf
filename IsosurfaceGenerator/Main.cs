@@ -46,7 +46,8 @@ namespace IsosurfaceGenerator
 			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
 
 			sw.Restart();
-			var exporter = new STLExporter(meshFilename);
+//			var exporter = new STLExporter(meshFilename);
+			var exporter = new OBJExporter(meshFilename);
 			exporter.Export(mesh);
 			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, meshFilename);
 
