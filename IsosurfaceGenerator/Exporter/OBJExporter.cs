@@ -24,7 +24,7 @@ namespace IsosurfaceGenerator.Exporter
 		public void Export(List<Triangle> triangles)
 		{
 			var sb = new StringBuilder();
-			sb.Append("g isosurface1");
+			sb.AppendLine("g isosurface1");
 
 			foreach(var triangle in triangles) {
 				sb.Append("v ");
@@ -64,7 +64,11 @@ namespace IsosurfaceGenerator.Exporter
 			}
 
 			for (var i = 0; i < triangles.Count; i++) {
-				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}", i * 3 + 1, i * 3 + 2, i * 3 + 3,  i + 1);
+				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}\n", i * 3 + 1, i * 3 + 2, i * 3 + 3,  i + 1);
+			}
+
+			using (var writer = new StreamWriter(_filename)) {
+				writer.Write(sb.ToString());
 			}
 		}
 	}
