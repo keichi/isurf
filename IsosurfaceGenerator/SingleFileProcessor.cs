@@ -63,12 +63,11 @@ namespace IsosurfaceGenerator
 
 			sw.Restart();
 			var mesh = mc.CalculateIsosurface();
-			mc.Dispose();
 			sw.Stop();
 
 			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);
 			sw.Restart();
-			IMeshExporter exporter = null;
+			IMeshExporter exporter;
 			switch(_meshFileType) {
 			case MeshFileType.OBJ:
 				exporter = new OBJExporter(_meshFilename);
