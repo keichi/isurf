@@ -19,6 +19,15 @@ namespace IsosurfaceGenerator
 		private string _meshFilename;
 		private float _isoValue;
 
+		private Dictionary<MeshFileType, string> MESH_FILE_EXTENSIONS = new Dictionary<MeshFileType, string>() {
+			{MeshFileType.OBJ, ".obj"},
+			{MeshFileType.STL, ".stl"},
+		};
+		private Dictionary<MeshFileType, Func<string, IMeshExporter>> MESH_EXPORTERS = new Dictionary<MeshFileType, Func<string, IMeshExporter>>() {
+			{MeshFileType.OBJ, s => new OBJExporter(s)},
+			{MeshFileType.STL, s => new STLExporter(s)},
+		};
+
 		public SingleFileProcessor (string ctlFilename, float isoValue, MeshFileType meshFileType)
 		{
 			_meshFileType = meshFileType;
@@ -32,14 +41,7 @@ namespace IsosurfaceGenerator
 				Path.GetDirectoryName(ctlFilename),
 				Path.GetFileNameWithoutExtension(ctlFilename)
 				);
-			switch(_meshFileType) {
-			case MeshFileType.OBJ:
-				meshFilename += ".obj";
-				break;
-			case MeshFileType.STL:
-				meshFilename += ".stl";
-				break;
-			}
+			meshFilename += MESH_FILE_EXTENSIONS[_meshFileType];
 			
 			return meshFilename;
 		}
@@ -69,15 +71,7 @@ namespace IsosurfaceGenerator
 
 			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);
 			sw.Restart();
-			IMeshExporter exporter;
-			switch(_meshFileType) {
-			case MeshFileType.OBJ:
-				exporter = new OBJExporter(_meshFilename);
-				break;
-			case MeshFileType.STL:
-				exporter = new STLExporter(_meshFilename);
-				break;
-			}
+			var  exporter = MESH_EXPORTERS[_meshFileType](_meshFilename);
 			exporter.Export(mesh);
 			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshFilename);
 			
