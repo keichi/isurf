@@ -31,8 +31,7 @@ namespace IsosurfaceGenerator
 				var files = Directory.GetFiles(ctlFilename, "*.ctl");
 				foreach (var file in files) {
 					processSingleFile(file, isoValue);
-					GC.Collect(2);
-					Console.WriteLine(GC.GetTotalMemory(false));
+					GC.Collect();
 				}
 			}
 		}
