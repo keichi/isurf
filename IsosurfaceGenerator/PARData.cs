@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace IsosurfaceGenerator
 {
@@ -29,7 +30,8 @@ namespace IsosurfaceGenerator
 
 		public void Dispose()
 		{
-			System.Runtime.InteropServices.Marshal.FreeHGlobal(RawData);
+			Marshal.FreeHGlobal(RawData);
+			GC.RemoveMemoryPressure(SizeX * SizeY * SizeZ * 4);
 		}
 	}
 }

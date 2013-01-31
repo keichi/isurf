@@ -27,8 +27,10 @@ namespace IsosurfaceGenerator
 			var sizeX = data.SizeX;
 			var sizeY = data.SizeY;
 			var sizeZ = data.SizeZ;
-			var rawData = Marshal.AllocHGlobal(sizeX * sizeY * sizeZ * 4);
-			var buf = new byte[sizeX * sizeY * sizeZ * 4];
+			var bufSize = sizeX * sizeY * sizeZ * 4;
+			var rawData = Marshal.AllocHGlobal(bufSize);
+			var buf = new byte[bufSize];
+			GC.AddMemoryPressure(bufSize);
 		
 			// Read contents of DAT file
 			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {

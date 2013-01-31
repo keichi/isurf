@@ -330,6 +330,7 @@ namespace IsosurfaceGenerator
 			var rawData = data.RawData;
 
 			_verticesBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
+			GC.AddMemoryPressure(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 
 			var i = 0;
 			unsafe {
@@ -452,6 +453,7 @@ namespace IsosurfaceGenerator
 
 		public void Dispose() {
 			Marshal.FreeHGlobal(_verticesBuffer);
+			GC.RemoveMemoryPressure(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 		}
 	}
 }
