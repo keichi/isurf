@@ -58,6 +58,7 @@ namespace IsosurfaceGenerator
 			
 			sw.Restart();
 			var mc = new MarchingCubes(data, _isoValue);
+			data.Dispose();
 			sw.Stop();
 			Console.WriteLine("[2/4] Initializing isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
 

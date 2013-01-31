@@ -5,7 +5,7 @@ namespace IsosurfaceGenerator
 	/// <summary>
 	/// Measure data of the phased array radar
 	/// </summary>
-	public class PARData
+	public class PARData : IDisposable
 	{
 		public float StepX { get; set; }
 		public float StepY { get; set; }
@@ -21,10 +21,15 @@ namespace IsosurfaceGenerator
 		
 		public float NoDataValue { get; set; }
 		
-		public float[,,] RawData { get; set; }
+		public IntPtr RawData { get; set; }
 		
 		public PARData ()
 		{
+		}
+
+		public void Dispose()
+		{
+			System.Runtime.InteropServices.Marshal.FreeHGlobal(RawData);
 		}
 	}
 }

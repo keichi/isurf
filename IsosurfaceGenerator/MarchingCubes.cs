@@ -333,8 +333,8 @@ namespace IsosurfaceGenerator
 
 			var i = 0;
 			unsafe {
-			var vptr = (Vertex*)_verticesBuffer.ToPointer();
-			fixed (float* ptr = rawData) {
+				var vptr = (Vertex*)_verticesBuffer.ToPointer();
+				var ptr = (float*)rawData.ToPointer();
 				for (var z = 0; z < _sizeZ; z++) {
 					for (var y = 0; y < _sizeY; y++) {
 						for (var x = 0; x < _sizeX; x++) {
@@ -349,7 +349,6 @@ namespace IsosurfaceGenerator
 						}
 					}
 				}
-			}
 			}
 		}
 
