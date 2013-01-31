@@ -25,7 +25,7 @@ namespace IsosurfaceGenerator
 			var isoValue = float.Parse(args[1]);
 
 			if (File.Exists(ctlFilename)) {
-				var processor = new SingleFileProcessor(ctlFilename, isoValue, MeshFileType.STL);
+				var processor = new SingleFileProcessor(ctlFilename, isoValue, MeshFileType.OBJ);
 				processor.Process();
 			} else if(Directory.Exists(ctlFilename)) {
 				var files = Directory.GetFiles(ctlFilename, "*.ctl");

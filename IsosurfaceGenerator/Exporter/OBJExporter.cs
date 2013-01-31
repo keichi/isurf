@@ -23,33 +23,47 @@ namespace IsosurfaceGenerator.Exporter
 
 		public void Export(List<Triangle> triangles)
 		{
+			var dict = new Dictionary<Vec3, int>();
 			var sb = new StringBuilder();
 			sb.AppendLine("g isosurface1");
 
+			var count = 1;
 			foreach(var triangle in triangles) {
-				sb.Append("v ");
-				sb.Append(triangle.Vertex1.X);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex1.Y);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex1.Z);
-				sb.AppendLine();
+				var vertex1 = triangle.Vertex1;
+				if (!dict.ContainsKey(vertex1)) {
+					dict.Add(vertex1, count++);
+					sb.Append("v ");
+					sb.Append(vertex1.X);
+					sb.Append(' ');
+					sb.Append(vertex1.Y);
+					sb.Append(' ');
+					sb.Append(vertex1.Z);
+					sb.AppendLine();
+				}
 
-				sb.Append("v ");
-				sb.Append(triangle.Vertex2.X);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex2.Y);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex2.Z);
-				sb.AppendLine();
+				var vertex2 = triangle.Vertex2;
+				if (!dict.ContainsKey(vertex2)) {
+					dict.Add(vertex2, count++);
+					sb.Append("v ");
+					sb.Append(vertex2.X);
+					sb.Append(' ');
+					sb.Append(vertex2.Y);
+					sb.Append(' ');
+					sb.Append(vertex2.Z);
+					sb.AppendLine();
+				}
 
-				sb.Append("v ");
-				sb.Append(triangle.Vertex3.X);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex3.Y);
-				sb.Append(' ');
-				sb.Append(triangle.Vertex3.Z);
-				sb.AppendLine();
+				var vertex3 = triangle.Vertex3;
+				if (!dict.ContainsKey(vertex3)) {
+					dict.Add(vertex3, count++);
+					sb.Append("v ");
+					sb.Append(vertex3.X);
+					sb.Append(' ');
+					sb.Append(vertex3.Y);
+					sb.Append(' ');
+					sb.Append(vertex3.Z);
+					sb.AppendLine();
+				}
 			}
 
 			foreach(var triangle in triangles) {
@@ -64,7 +78,15 @@ namespace IsosurfaceGenerator.Exporter
 			}
 
 			for (var i = 0; i < triangles.Count; i++) {
-				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}\n", i * 3 + 1, i * 3 + 2, i * 3 + 3,  i + 1);
+				var i1 = dict[triangles[i].Vertex1];
+				var i2 = dict[triangles[i].Vertex2];
+				var i3 = dict[triangles[i].Vertex3];
+
+				if (i1 == i2 || i1 == i3 || i2 == i3) {
+					continue;
+				}
+				
+				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}\n", i1, i2, i3,  i + 1);
 			}
 
 			using (var writer = new StreamWriter(_filename)) {
