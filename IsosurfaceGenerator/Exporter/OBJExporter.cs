@@ -85,8 +85,24 @@ namespace IsosurfaceGenerator.Exporter
 				if (i1 == i2 || i1 == i3 || i2 == i3) {
 					continue;
 				}
+
+				sb.Append("f ");
+
+				sb.Append(i1);
+				sb.Append("//");
+				sb.Append(i + 1);
 				
-				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}\n", i1, i2, i3,  i + 1);
+				sb.Append(' ');
+				sb.Append(i2);
+				sb.Append("//");
+				sb.Append(i + 1);
+				
+				sb.Append(' ');
+				sb.Append(i3);
+				sb.Append("//");
+				sb.Append(i + 1);
+				
+				sb.AppendLine();
 			}
 
 			File.WriteAllText(_filename, sb.ToString());
