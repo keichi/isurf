@@ -332,21 +332,21 @@ namespace IsosurfaceGenerator
 			_verticesBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 			GC.AddMemoryPressure(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 
-			var i = 0;
 			unsafe {
 				var vptr = (Vertex*)_verticesBuffer.ToPointer();
 				var ptr = (float*)rawData.ToPointer();
 				for (var z = 0; z < _sizeZ; z++) {
 					for (var y = 0; y < _sizeY; y++) {
 						for (var x = 0; x < _sizeX; x++) {
-							vptr[i].Point = new Vec3 (
+							(*vptr).Point = new Vec3 (
 								startX + stepX * x,
 								startY + stepY * y,
 								startZ + stepZ * z
 							);
-							vptr[i].Value = ptr[i];
-							vptr[i].IsInside = ptr[i] > isoValue;
-							i++;
+							(*vptr).Value = *ptr;
+							(*vptr).IsInside = *ptr > isoValue;
+							vptr++;
+							ptr++;
 						}
 					}
 				}
@@ -356,8 +356,8 @@ namespace IsosurfaceGenerator
 		public unsafe List<Triangle> CalculateIsosurface ()
 		{
 			var triangles = new List<Triangle>();
-			var vertlist = new Vertex[12];
-			var _vertices = (Vertex*)_verticesBuffer.ToPointer();
+			var vertexList = new Vertex[12];
+			var vertices = (Vertex*)_verticesBuffer.ToPointer();
 
 			for (var z = 0; z < _sizeZ - 1; z++) {
 				for (var y = 0; y < _sizeY - 1; y++) {
@@ -365,82 +365,82 @@ namespace IsosurfaceGenerator
 						var lookup = 0;
 						var index = x + y * _sizeX + z * _sizeX * _sizeY;
 
-						if (_vertices[index].IsInside) lookup |= 128;
-						if (_vertices[index + 1].IsInside) lookup |= 64;
-						if (_vertices[index + _sizeX].IsInside) lookup |= 8;
-						if (_vertices[index + 1 + _sizeX].IsInside) lookup |= 4;
-						if (_vertices[index + _sizeXY].IsInside) lookup |= 16;
-						if (_vertices[index + 1 + _sizeXY].IsInside) lookup |= 32;
-						if (_vertices[index + _sizeX + _sizeXY].IsInside) lookup |= 1;
-						if (_vertices[index + 1 + _sizeX + _sizeXY].IsInside) lookup |= 2;
+						if (vertices[index].IsInside) lookup |= 128;
+						if (vertices[index + 1].IsInside) lookup |= 64;
+						if (vertices[index + _sizeX].IsInside) lookup |= 8;
+						if (vertices[index + 1 + _sizeX].IsInside) lookup |= 4;
+						if (vertices[index + _sizeXY].IsInside) lookup |= 16;
+						if (vertices[index + 1 + _sizeXY].IsInside) lookup |= 32;
+						if (vertices[index + _sizeX + _sizeXY].IsInside) lookup |= 1;
+						if (vertices[index + 1 + _sizeX + _sizeXY].IsInside) lookup |= 2;
 
 						if ((lookup != 0) && (lookup != 255))
 						{
 							// 0 - 1
 							if ((EDGE_TABLE[lookup] & 1) != 0) 
-								vertlist[0]= Vertex.Interpolate(_vertices[index + _sizeX + _sizeXY],
-																		_vertices[index + 1 + _sizeY + _sizeXY], _isoValue);
+								vertexList[0]= Vertex.Interpolate(vertices[index + _sizeX + _sizeXY],
+																		vertices[index + 1 + _sizeY + _sizeXY], _isoValue);
 							
 							// 1 - 2
 							if ((EDGE_TABLE[lookup] & 2) != 0) 
-								vertlist[1] = Vertex.Interpolate(_vertices[index + 1 + _sizeX + _sizeXY],
-								                                       _vertices[index + 1 + _sizeX], _isoValue);
+								vertexList[1] = Vertex.Interpolate(vertices[index + 1 + _sizeX + _sizeXY],
+								                                       vertices[index + 1 + _sizeX], _isoValue);
 							
 							// 2 - 3
 							if ((EDGE_TABLE[lookup] & 4) != 0) 
-								vertlist[2] = Vertex.Interpolate(_vertices[index + 1 + _sizeX],
-								                                  _vertices[index + _sizeX], _isoValue);
+								vertexList[2] = Vertex.Interpolate(vertices[index + 1 + _sizeX],
+								                                  vertices[index + _sizeX], _isoValue);
 							
 							// 3 - 0
 							if ((EDGE_TABLE[lookup] & 8) != 0) 
-								vertlist[3] = Vertex.Interpolate(_vertices[index + _sizeX],
-								                                  _vertices[index + _sizeX + _sizeXY], _isoValue);
+								vertexList[3] = Vertex.Interpolate(vertices[index + _sizeX],
+								                                  vertices[index + _sizeX + _sizeXY], _isoValue);
 							
 							// 4 - 5
 							if ((EDGE_TABLE[lookup] & 16) != 0) 
-								vertlist[4] = Vertex.Interpolate(_vertices[index + _sizeXY],
-								                                  _vertices[index + 1 + _sizeXY], _isoValue);
+								vertexList[4] = Vertex.Interpolate(vertices[index + _sizeXY],
+								                                  vertices[index + 1 + _sizeXY], _isoValue);
 							
 							// 5 - 6
 							if ((EDGE_TABLE[lookup] & 32) != 0) 
-								vertlist[5] = Vertex.Interpolate(_vertices[index + 1 + _sizeXY],
-								                                  _vertices[index + 1], _isoValue);
+								vertexList[5] = Vertex.Interpolate(vertices[index + 1 + _sizeXY],
+								                                  vertices[index + 1], _isoValue);
 							
 							// 6 - 7
 							if ((EDGE_TABLE[lookup] & 64) != 0) 
-								vertlist[6] = Vertex.Interpolate(_vertices[index + 1],
-								                                  _vertices[index], _isoValue);
+								vertexList[6] = Vertex.Interpolate(vertices[index + 1],
+								                                  vertices[index], _isoValue);
 							
 							// 7 - 4
 							if ((EDGE_TABLE[lookup] & 128) != 0) 
-								vertlist[7] = Vertex.Interpolate(_vertices[index],
-								                                  _vertices[index + _sizeXY], _isoValue);
+								vertexList[7] = Vertex.Interpolate(vertices[index],
+								                                  vertices[index + _sizeXY], _isoValue);
 							
 							// 0 - 4
 							if ((EDGE_TABLE[lookup] & 256) != 0)
-								vertlist[8] = Vertex.Interpolate(_vertices[index + _sizeX + _sizeXY],
-								                                  _vertices[index + _sizeXY], _isoValue);
+								vertexList[8] = Vertex.Interpolate(vertices[index + _sizeX + _sizeXY],
+								                                  vertices[index + _sizeXY], _isoValue);
 							
 							// 1 - 5
 							if ((EDGE_TABLE[lookup] & 512) != 0) 
-								vertlist[9] = Vertex.Interpolate(_vertices[index + 1 + _sizeX + _sizeXY],
-								                                  _vertices[index + 1 + _sizeXY], _isoValue);
+								vertexList[9] = Vertex.Interpolate(vertices[index + 1 + _sizeX + _sizeXY],
+								                                  vertices[index + 1 + _sizeXY], _isoValue);
 							
 							// 2 - 6
 							if ((EDGE_TABLE[lookup] & 1024) != 0) 
-								vertlist[10] = Vertex.Interpolate(_vertices[index + 1 + _sizeX],
-								                                   _vertices[index + 1], _isoValue);
+								vertexList[10] = Vertex.Interpolate(vertices[index + 1 + _sizeX],
+								                                   vertices[index + 1], _isoValue);
 							
 							// 3 - 7
 							if ((EDGE_TABLE[lookup] & 2048) != 0) 
-								vertlist[11] = Vertex.Interpolate(_vertices[index + _sizeX],
-								                                   _vertices[index], _isoValue);
+								vertexList[11] = Vertex.Interpolate(vertices[index + _sizeX],
+								                                   vertices[index], _isoValue);
 
 							for (var i = 0; i < TRI_TABLE[lookup].Length; i += 3) {
 								triangles.Add(new Triangle(
-									vertlist[TRI_TABLE[lookup][i]].Point,
-									vertlist[TRI_TABLE[lookup][i + 1]].Point,
-									vertlist[TRI_TABLE[lookup][i + 2]].Point
+									vertexList[TRI_TABLE[lookup][i]].Point,
+									vertexList[TRI_TABLE[lookup][i + 1]].Point,
+									vertexList[TRI_TABLE[lookup][i + 2]].Point
 								));
 							}
 						}
