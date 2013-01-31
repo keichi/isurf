@@ -63,6 +63,7 @@ namespace IsosurfaceGenerator
 
 			sw.Restart();
 			var mesh = mc.CalculateIsosurface();
+			mc.Dispose();
 			sw.Stop();
 
 			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);

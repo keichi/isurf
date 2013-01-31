@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 
 using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator
 {
-	public class MarchingCubes
+	public class MarchingCubes : IDisposable
 	{
 		#region EDGE_TABLE
 		private static readonly int[] EDGE_TABLE = new int [] {
@@ -306,7 +307,7 @@ namespace IsosurfaceGenerator
 		};
 		#endregion TRI_TABLE
 
-		private Vertex[] _vertices;
+		private IntPtr _verticesBuffer;
 		private int _sizeX;
 		private int _sizeY;
 		private int _sizeZ;
@@ -328,21 +329,22 @@ namespace IsosurfaceGenerator
 			var startZ = data.StartZ;
 			var rawData = data.RawData;
 
-			_vertices = new Vertex[_sizeX * _sizeY * _sizeZ];
+			_verticesBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 
 			var i = 0;
 			unsafe {
+			var vptr = (Vertex*)_verticesBuffer.ToPointer();
 			fixed (float* ptr = rawData) {
 				for (var z = 0; z < _sizeZ; z++) {
 					for (var y = 0; y < _sizeY; y++) {
 						for (var x = 0; x < _sizeX; x++) {
-							_vertices[i].Point = new Vec3 (
+							vptr[i].Point = new Vec3 (
 								startX + stepX * x,
 								startY + stepY * y,
 								startZ + stepZ * z
 							);
-							_vertices[i].Value = ptr[i];
-							_vertices[i].IsInside = ptr[i] > isoValue;
+							vptr[i].Value = ptr[i];
+							vptr[i].IsInside = ptr[i] > isoValue;
 							i++;
 						}
 					}
@@ -351,10 +353,11 @@ namespace IsosurfaceGenerator
 			}
 		}
 
-		public List<Triangle> CalculateIsosurface ()
+		public unsafe List<Triangle> CalculateIsosurface ()
 		{
 			var triangles = new List<Triangle>();
 			var vertlist = new Vertex[12];
+			var _vertices = (Vertex*)_verticesBuffer.ToPointer();
 
 			for (var z = 0; z < _sizeZ - 1; z++) {
 				for (var y = 0; y < _sizeY - 1; y++) {
@@ -446,6 +449,10 @@ namespace IsosurfaceGenerator
 			}
 
 			return triangles;
+		}
+
+		public void Dispose() {
+			Marshal.FreeHGlobal(_verticesBuffer);
 		}
 	}
 }

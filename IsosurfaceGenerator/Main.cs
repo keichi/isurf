@@ -30,11 +30,17 @@ namespace IsosurfaceGenerator
 			} else if(Directory.Exists(ctlFilename)) {
 				var files = Directory.GetFiles(ctlFilename, "*.ctl");
 				foreach (var file in files) {
-					var processor = new SingleFileProcessor(file, isoValue, MeshFileType.STL);
-					processor.Process();
-					GC.Collect ();
+					processSingleFile(file, isoValue);
+					GC.Collect();
+					Console.WriteLine(GC.GetTotalMemory(false));
 				}
 			}
+		}
+
+		private static void processSingleFile(string filename, float isoValue) {
+			var processor = new SingleFileProcessor(filename, isoValue, MeshFileType.OBJ);
+			processor.Process();
+			processor = null;
 		}
 
 		private static void printCopyrights() {
