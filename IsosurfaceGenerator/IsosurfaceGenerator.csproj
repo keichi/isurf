@@ -40,21 +40,24 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="GradsFileReader.cs" />
-    <Compile Include="MarchingCubes.cs" />
-    <Compile Include="PARData.cs" />
     <Compile Include="Utils\Vec3.cs" />
     <Compile Include="Utils\Vertex.cs" />
     <Compile Include="Utils\Triangle.cs" />
     <Compile Include="Exporter\IMeshExporter.cs" />
     <Compile Include="Exporter\STLExporter.cs" />
-    <Compile Include="VectorTest.cs" />
     <Compile Include="Exporter\OBJExporter.cs" />
     <Compile Include="SingleFileProcessor.cs" />
+    <Compile Include="Tests\VectorTest.cs" />
+    <Compile Include="Algorithm\MarchingCubes.cs" />
+    <Compile Include="Algorithm\PARData.cs" />
+    <Compile Include="Importer\GradsFileReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Utils\" />
     <Folder Include="Exporter\" />
+    <Folder Include="Tests\" />
+    <Folder Include="Algorithm\" />
+    <Folder Include="Importer\" />
   </ItemGroup>
 </Project>
