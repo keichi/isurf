@@ -67,28 +67,6 @@ namespace IsosurfaceGenerator.Utils
 			v.Z = v1.Z + v2.Z;
 			return v;
 		}
-		
-		public static Vec3 Interpolate(float isoValue, Vec3 v1, Vec3 v2, float f1, float f2) {
-			Vec3 v;
-			
-			if (Math.Abs(isoValue - f1) < 0.00001) {
-				return v1;
-			}
-			if (Math.Abs(isoValue - f2) < 0.00001) {
-				return v2;
-			}
-			if (Math.Abs(f1 - f2) < 0.00001) {
-				return v1;
-			}
-
-			var diff = (isoValue -  f1) / (f2 - f1);
-			
-			v.X = v1.X + (v2.X - v1.X) * diff;
-			v.Y = v1.Y + (v2.Y - v1.Y) * diff;
-			v.Z = v1.Z + (v2.Z - v1.Z) * diff;
-			
-			return v;
-		}
 	}
 }
 
