@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 using IsosurfaceGenerator.Utils;
 using IsosurfaceGenerator.Exporter;
@@ -11,6 +12,8 @@ namespace IsosurfaceGenerator
 	{
 		public static void Main (string[] args)
 		{
+			Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
 			printCopyrights();
 
 			if (args.Length < 1 || String.IsNullOrWhiteSpace(args[0])) {
@@ -25,8 +28,7 @@ namespace IsosurfaceGenerator
 			var isoValue = float.Parse(args[1]);
 
 			if (File.Exists(ctlFilename)) {
-				var processor = new SingleFileProcessor(ctlFilename, isoValue, MeshFileType.OBJ);
-				processor.Process();
+				processSingleFile(ctlFilename, isoValue);
 			} else if(Directory.Exists(ctlFilename)) {
 				var files = Directory.GetFiles(ctlFilename, "*.ctl");
 				foreach (var file in files) {
@@ -37,6 +39,9 @@ namespace IsosurfaceGenerator
 		}
 
 		private static void processSingleFile(string filename, float isoValue) {
+			Console.WriteLine ("====================");
+			Console.WriteLine ("Start processing CTL file \"{0}\"", filename);
+
 			var processor = new SingleFileProcessor(filename, isoValue, MeshFileType.OBJ);
 			processor.Process();
 			processor = null;

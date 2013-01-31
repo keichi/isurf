@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using IsosurfaceGenerator.Exporter;
 using IsosurfaceGenerator.Utils;
@@ -46,37 +47,33 @@ namespace IsosurfaceGenerator
 			return meshFilename;
 		}
 
-		public void Process()
+		public void Process ()
 		{
-			Console.WriteLine("====================");
-			Console.WriteLine("Start processing CTL file \"{0}\"", _ctlFilename);
-
-			var sw = new System.Diagnostics.Stopwatch();
-			sw.Start();
-			var reader = new GradsFileReader(_ctlFilename);
-			var data = reader.ReadData();
-			sw.Stop();
-			Console.WriteLine("[1/4] Read/parse GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
+			var sw = new Stopwatch ();
+			sw.Start ();
+			var reader = new GradsFileReader (_ctlFilename);
+			using (var data = reader.ReadData()) {
+				sw.Stop ();
+				Debug.WriteLine ("[1/4] Read/parse GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
 			
-			sw.Restart();
-			var mc = new MarchingCubes(data, _isoValue);
-			data.Dispose();
-			sw.Stop();
-			Console.WriteLine("[2/4] Initializing isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
+				sw.Restart ();
+				using (var mc = new MarchingCubes (data, _isoValue)) {
+					sw.Stop();
+					Debug.WriteLine("[2/4] Initializing isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
+					
+					sw.Restart();
+					var mesh = mc.CalculateIsosurface();
+					sw.Stop();
 
-			sw.Restart();
-			var mesh = mc.CalculateIsosurface();
-			mc.Dispose();
-			sw.Stop();
+					Debug.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);
+					sw.Restart();
+					var  exporter = MESH_EXPORTERS[_meshFileType](_meshFilename);
+					exporter.Export(mesh);
+					Debug.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshFilename);
 
-			Console.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);
-			sw.Restart();
-			var  exporter = MESH_EXPORTERS[_meshFileType](_meshFilename);
-			exporter.Export(mesh);
-			Console.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshFilename);
-			
-			Console.WriteLine();
-			Console.WriteLine("Resulted in {0} triangles.", mesh.Count);
+					Debug.WriteLine("Resulted in {0} triangles.", mesh.Count);
+				}
+			}
 		}
 	}
 }
