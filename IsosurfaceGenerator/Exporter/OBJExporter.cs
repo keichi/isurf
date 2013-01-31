@@ -25,7 +25,7 @@ namespace IsosurfaceGenerator.Exporter
 		{
 			var dict = new Dictionary<Vec3, int>();
 			var sb = new StringBuilder();
-			sb.AppendLine("g isosurface1");
+			sb.AppendLine("g isosurface");
 
 			var count = 1;
 			foreach(var triangle in triangles) {
@@ -89,9 +89,7 @@ namespace IsosurfaceGenerator.Exporter
 				sb.AppendFormat("f {0}//{3} {1}//{3} {2}//{3}\n", i1, i2, i3,  i + 1);
 			}
 
-			using (var writer = new StreamWriter(_filename)) {
-				writer.Write(sb.ToString());
-			}
+			File.WriteAllText(_filename, sb.ToString());
 		}
 	}
 
