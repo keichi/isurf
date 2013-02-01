@@ -22,10 +22,12 @@ namespace IsosurfaceGenerator.Exporter
 
 		private unsafe void writeStruct<T>(Stream stream, T obj) where T : struct
 		{
-			var buf = new byte[sizeof(T)];
-			fixed (byte* ptr = buf) {
-				*(T*)ptr = obj;
-			}
+			var buf = new byte[Marshal.SizeOf(obj)];
+			var handle = GCHandle.Alloc(buf, GCHandleType.Pinned);
+
+			Marshal.StructureToPtr(obj, handle.AddrOfPinnedObject(), false);
+			handle.Free();
+
 			stream.Write(buf, 0, buf.Length);
 		}
 
