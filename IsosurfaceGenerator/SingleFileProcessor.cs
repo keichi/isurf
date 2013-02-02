@@ -57,7 +57,8 @@ namespace IsosurfaceGenerator
 				Debug.WriteLine ("[1/4] Read/parse GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
 			
 				sw.Restart ();
-				using (var mc = new MarchingCubes (data, _isoValue)) {
+				using (var mc = new MarchingCubes(data)) {
+					mc.UpdateIsosurfaceValue(_isoValue);
 					sw.Stop();
 					Debug.WriteLine("[2/4] Initializing isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
 					

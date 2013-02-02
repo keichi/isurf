@@ -314,13 +314,12 @@ namespace IsosurfaceGenerator
 		private int _sizeXY;
 		private float _isoValue;
 
-		public MarchingCubes (PARData data, float isoValue)
+		public MarchingCubes (PARData data)
 		{
 			_sizeX = data.SizeX;
 			_sizeY = data.SizeY;
 			_sizeZ = data.SizeZ;
 			_sizeXY = _sizeX * _sizeY;
-			_isoValue = isoValue;
 			var stepX = data.StepX;
 			var stepY = data.StepY;
 			var stepZ = data.StepZ;
@@ -338,18 +337,28 @@ namespace IsosurfaceGenerator
 				for (var z = 0; z < _sizeZ; z++) {
 					for (var y = 0; y < _sizeY; y++) {
 						for (var x = 0; x < _sizeX; x++) {
-							(*vptr).Point = new Vec3 (
+							vptr->Point = new Vec3 (
 								startX + stepX * x,
 								startY + stepY * y,
 								startZ + stepZ * z
 							);
-							(*vptr).Value = *ptr;
-							(*vptr).IsInside = *ptr > isoValue;
+							vptr->Value = *ptr;
 							vptr++;
 							ptr++;
 						}
 					}
 				}
+			}
+		}
+
+		public unsafe void UpdateIsosurfaceValue(float isoValue)
+		{
+			_isoValue = isoValue;
+			var vptr = (Vertex*)_verticesBuffer.ToPointer();
+			var size = _sizeX * _sizeY * _sizeZ;
+			for (var i = 0; i < size; i++) {
+				vptr->IsInside = vptr->Value > isoValue;
+				vptr++;
 			}
 		}
 
