@@ -16,8 +16,8 @@ namespace IsosurfaceGenerator
 	public class SingleFileProcessor
 	{
 		private MeshFileType _meshFileType;
-		private string _ctlFilename;
-		private string _meshFilename;
+		private string _ctlPath;
+		private string _meshPath;
 		private float _isoValue;
 
 		private Dictionary<MeshFileType, string> MESH_FILE_EXTENSIONS = new Dictionary<MeshFileType, string>() {
@@ -29,15 +29,15 @@ namespace IsosurfaceGenerator
 			{MeshFileType.STL, s => new STLExporter(s)},
 		};
 
-		public SingleFileProcessor (string ctlFilename, float isoValue, MeshFileType meshFileType)
+		public SingleFileProcessor (string ctlPath, float isoValue, MeshFileType meshFileType)
 		{
 			_meshFileType = meshFileType;
-			_ctlFilename = ctlFilename;
-			_meshFilename = getMeshFilename(_ctlFilename);
+			_ctlPath = ctlPath;
+			_meshPath = getMeshPath(_ctlPath);
 			_isoValue = isoValue;
 		}
 
-		private string getMeshFilename(string ctlFilename) {
+		private string getMeshPath(string ctlFilename) {
 			var meshFilename = Path.Combine(
 				Path.GetDirectoryName(ctlFilename),
 				Path.GetFileNameWithoutExtension(ctlFilename)
@@ -51,7 +51,7 @@ namespace IsosurfaceGenerator
 		{
 			var sw = new Stopwatch ();
 			sw.Start ();
-			var reader = new GradsFileReader (_ctlFilename);
+			var reader = new GradsFileReader (_ctlPath);
 			using (var data = reader.ReadData()) {
 				sw.Stop ();
 				Debug.WriteLine ("[1/4] Read/parse GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
@@ -68,9 +68,9 @@ namespace IsosurfaceGenerator
 
 					Debug.WriteLine("[3/4] Generating isosurface where value is {1}. ({0}[ms])", sw.ElapsedMilliseconds, _isoValue);
 					sw.Restart();
-					var  exporter = MESH_EXPORTERS[_meshFileType](_meshFilename);
+					var  exporter = MESH_EXPORTERS[_meshFileType](_meshPath);
 					exporter.Export(mesh);
-					Debug.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshFilename);
+					Debug.WriteLine("[4/4] Writing isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshPath);
 
 					Debug.WriteLine("Resulted in {0} triangles.", mesh.Count);
 				}
