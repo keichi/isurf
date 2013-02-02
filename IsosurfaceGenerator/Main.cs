@@ -17,17 +17,18 @@ namespace IsosurfaceGenerator
 			initializeProgram();
 			printCopyrights();
 
-			var ctlFilename = "";
-			var isoValue = 0.0f;
+			var ctlPath = "";
+			var outputPath = "";
+			var isoValues = new float[] {};
 
-			parseCommandLineArgs(args, ref ctlFilename, ref isoValue);
+			parseCommandLineArgs(args, ref ctlPath, ref outputPath, ref isoValues);
 
-			if (File.Exists(ctlFilename)) {
-				processSingleFile(ctlFilename, isoValue);
-			} else if(Directory.Exists(ctlFilename)) {
-				var files = Directory.GetFiles(ctlFilename, "*.ctl");
+			if (File.Exists(ctlPath)) {
+				processSingleFile(ctlPath, outputPath, isoValues);
+			} else if(Directory.Exists(ctlPath)) {
+				var files = Directory.GetFiles(ctlPath, "*.ctl");
 				foreach (var file in files) {
-					processSingleFile(file, isoValue);
+					processSingleFile(file, outputPath, isoValues);
 				}
 			}
 		}
@@ -41,28 +42,33 @@ namespace IsosurfaceGenerator
 			};
 		}
 
-		private static void processSingleFile(string filename, float isoValue)
+		private static void processSingleFile(string filename, string outputPath, float[] isoValues)
 		{
 			Console.WriteLine ("====================");
 			Console.WriteLine ("Start processing CTL file \"{0}\"", filename);
 
-			var processor = new SingleFileProcessor(filename, isoValue, MeshFileType.OBJ);
+			var processor = new SingleFileProcessor(filename, outputPath, isoValues, MeshFileType.OBJ);
 			processor.Process();
 			processor = null;
 		}
 
-		private static void parseCommandLineArgs(string[] args, ref string ctlFilename, ref float isoValue)
+		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
 			if (args.Length < 1 || String.IsNullOrWhiteSpace(args[0])) {
 				Console.WriteLine("Please specify a GrADS CTL file.");
 				return;
 			}
 			if (args.Length < 2 || String.IsNullOrWhiteSpace(args[1])) {
+				Console.WriteLine("Please specify output path.");
+				return;
+			}
+			if (args.Length < 3 || String.IsNullOrWhiteSpace(args[2])) {
 				Console.WriteLine("Please specify the value you want generate the isosurface.");
 				return;
 			}
-			ctlFilename = args[0];
-			isoValue = float.Parse(args[1]);
+			ctlPath = args[0];
+			outputPath = args[1];
+			isoValues = args.Skip(2).Select(s => float.Parse(s)).ToArray();
 		}
 
 		private static void printCopyrights()

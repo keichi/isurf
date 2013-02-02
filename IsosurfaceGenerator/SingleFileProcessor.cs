@@ -29,22 +29,26 @@ namespace IsosurfaceGenerator
 			{MeshFileType.STL, s => new STLExporter(s)},
 		};
 
-		public SingleFileProcessor (string ctlPath, float isoValue, MeshFileType meshFileType)
-			: this(ctlPath, new float[] {isoValue}, meshFileType)
+		public SingleFileProcessor (string ctlPath, string outputPath, float isoValue, MeshFileType meshFileType)
+			: this(ctlPath, outputPath, new float[] {isoValue}, meshFileType)
 		{
 		}
 
-		public SingleFileProcessor (string ctlPath, float[] isoValues, MeshFileType meshFileType)
+		public SingleFileProcessor (string ctlPath, string outputPath, float[] isoValues, MeshFileType meshFileType)
 		{
 			_meshFileType = meshFileType;
 			_ctlPath = ctlPath;
-			_meshPath = getMeshPath(_ctlPath);
+			_meshPath = getMeshPath(outputPath, ctlPath);
 			_isoValues = isoValues;
+			
+			if (!Directory.Exists(outputPath)) {
+				Directory.CreateDirectory(outputPath);
+			}
 		}
 
-		private string getMeshPath(string ctlFilename) {
+		private string getMeshPath(string outputPath, string ctlFilename) {
 			var meshFilename = Path.Combine(
-				Path.GetDirectoryName(ctlFilename),
+				outputPath,
 				Path.GetFileNameWithoutExtension(ctlFilename)
 				);
 			meshFilename += MESH_FILE_EXTENSIONS[_meshFileType];
@@ -68,7 +72,6 @@ namespace IsosurfaceGenerator
 
 					using (var exporter = MESH_EXPORTERS[_meshFileType](_meshPath)) {
 						foreach (var isoValue in _isoValues) {
-
 								sw.Restart();
 								mc.UpdateIsosurfaceValue(isoValue);
 								var mesh = mc.CalculateIsosurface();
