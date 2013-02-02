@@ -31,7 +31,8 @@ namespace IsosurfaceGenerator.Exporter
 			stream.Write(buf, 0, buf.Length);
 		}
 
-		public void Export(List<Triangle> triangles) {
+		public void Export(List<Triangle> triangles, float isoValue)
+		{
 			using (var fs = File.OpenWrite(_filename)) {
 				fs.Write(new byte[80], 0, 80);
 				fs.Write(BitConverter.GetBytes(triangles.Count), 0, 4);
@@ -43,6 +44,10 @@ namespace IsosurfaceGenerator.Exporter
 					fs.Write (new byte[2], 0, 2);
 				}
 			}
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }

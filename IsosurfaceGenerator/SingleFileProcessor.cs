@@ -61,24 +61,26 @@ namespace IsosurfaceGenerator
 				sw.Stop ();
 				Debug.WriteLine ("Read/parsed GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
 			
-				sw.Restart ();
+				sw.Restart();
 				using (var mc = new MarchingCubes(data)) {
 					sw.Stop();
 					Debug.WriteLine("Initialized isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
 
-					foreach (var isoValue in _isoValues) {
-						sw.Restart();
-						mc.UpdateIsosurfaceValue(isoValue);
-						var mesh = mc.CalculateIsosurface();
-						sw.Stop();
-						Debug.WriteLine("Generated isosurface for value = {1}. ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
+					using (var exporter = MESH_EXPORTERS[_meshFileType](_meshPath)) {
+						foreach (var isoValue in _isoValues) {
 
-						sw.Restart();
-						var  exporter = MESH_EXPORTERS[_meshFileType](_meshPath);
-						exporter.Export(mesh);
-						sw.Stop();
-						Debug.WriteLine("Wrote isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshPath);
-						Debug.WriteLine("Resulted in {0} triangles.", mesh.Count);
+								sw.Restart();
+								mc.UpdateIsosurfaceValue(isoValue);
+								var mesh = mc.CalculateIsosurface();
+								sw.Stop();
+								Debug.WriteLine("Generated isosurface for value = {1}. ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
+								
+								sw.Restart();
+								exporter.Export(mesh, isoValue);
+								sw.Stop();
+								Debug.WriteLine("Wrote isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshPath);
+								Debug.WriteLine("Resulted in {0} triangles.", mesh.Count);
+						}
 					}
 				}
 			}

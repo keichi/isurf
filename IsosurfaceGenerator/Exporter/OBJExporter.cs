@@ -10,7 +10,9 @@ namespace IsosurfaceGenerator.Exporter
 {
 	public class OBJExporter : IMeshExporter
 	{
-		private string _filename;
+		private StreamWriter _writer;
+		private int _verticesCount = 1;
+		private int _normalVecsCount = 1;
 
 		private OBJExporter()
 		{
@@ -18,63 +20,62 @@ namespace IsosurfaceGenerator.Exporter
 
 		public OBJExporter (string filename)
 		{
-			_filename = filename;
+			_writer = new StreamWriter(filename);
 		}
 
-		public void Export(List<Triangle> triangles)
+		public void Export(List<Triangle> triangles, float isoValue)
 		{
 			var dict = new Dictionary<Vec3, int>();
-			var sb = new StringBuilder();
-			sb.AppendLine("g isosurface");
+			_writer.WriteLine("g " + isoValue.ToString());
 
-			var count = 1;
 			foreach(var triangle in triangles) {
 				var vertex1 = triangle.Vertex1;
 				if (!dict.ContainsKey(vertex1)) {
-					dict.Add(vertex1, count++);
-					sb.Append("v ");
-					sb.Append(vertex1.X);
-					sb.Append(' ');
-					sb.Append(vertex1.Y);
-					sb.Append(' ');
-					sb.Append(vertex1.Z);
-					sb.AppendLine();
+					dict.Add(vertex1, _verticesCount++);
+					_writer.Write("v ");
+					_writer.Write(vertex1.X);
+					_writer.Write(' ');
+					_writer.Write(vertex1.Y);
+					_writer.Write(' ');
+					_writer.Write(vertex1.Z);
+					_writer.WriteLine();
 				}
 
 				var vertex2 = triangle.Vertex2;
 				if (!dict.ContainsKey(vertex2)) {
-					dict.Add(vertex2, count++);
-					sb.Append("v ");
-					sb.Append(vertex2.X);
-					sb.Append(' ');
-					sb.Append(vertex2.Y);
-					sb.Append(' ');
-					sb.Append(vertex2.Z);
-					sb.AppendLine();
+					dict.Add(vertex2, _verticesCount++);
+					_writer.Write("v ");
+					_writer.Write(vertex2.X);
+					_writer.Write(' ');
+					_writer.Write(vertex2.Y);
+					_writer.Write(' ');
+					_writer.Write(vertex2.Z);
+					_writer.WriteLine();
 				}
 
 				var vertex3 = triangle.Vertex3;
 				if (!dict.ContainsKey(vertex3)) {
-					dict.Add(vertex3, count++);
-					sb.Append("v ");
-					sb.Append(vertex3.X);
-					sb.Append(' ');
-					sb.Append(vertex3.Y);
-					sb.Append(' ');
-					sb.Append(vertex3.Z);
-					sb.AppendLine();
+					dict.Add(vertex3, _verticesCount++);
+					_writer.Write("v ");
+					_writer.Write(vertex3.X);
+					_writer.Write(' ');
+					_writer.Write(vertex3.Y);
+					_writer.Write(' ');
+					_writer.Write(vertex3.Z);
+					_writer.WriteLine();
 				}
 			}
 
 			foreach(var triangle in triangles) {
+				_normalVecsCount++;
 				var normal = (triangle.Vertex3 - triangle.Vertex1).Cross (triangle.Vertex2 - triangle.Vertex1).Normalize ();
-				sb.Append("vn ");
-				sb.Append(normal.X);
-				sb.Append(' ');
-				sb.Append(normal.Y);
-				sb.Append(' ');
-				sb.Append(normal.Z);
-				sb.AppendLine();
+				_writer.Write("vn ");
+				_writer.Write(normal.X);
+				_writer.Write(' ');
+				_writer.Write(normal.Y);
+				_writer.Write(' ');
+				_writer.Write(normal.Z);
+				_writer.WriteLine();
 			}
 
 			for (var i = 0; i < triangles.Count; i++) {
@@ -86,26 +87,29 @@ namespace IsosurfaceGenerator.Exporter
 					continue;
 				}
 
-				sb.Append("f ");
+				_writer.Write("f ");
 
-				sb.Append(i1);
-				sb.Append("//");
-				sb.Append(i + 1);
+				_writer.Write(i1);
+				_writer.Write("//");
+				_writer.Write(i + 1);
 				
-				sb.Append(' ');
-				sb.Append(i2);
-				sb.Append("//");
-				sb.Append(i + 1);
+				_writer.Write(' ');
+				_writer.Write(i2);
+				_writer.Write("//");
+				_writer.Write(i + 1);
 				
-				sb.Append(' ');
-				sb.Append(i3);
-				sb.Append("//");
-				sb.Append(i + 1);
+				_writer.Write(' ');
+				_writer.Write(i3);
+				_writer.Write("//");
+				_writer.Write(i + 1);
 				
-				sb.AppendLine();
+				_writer.WriteLine();
 			}
+		}
 
-			File.WriteAllText(_filename, sb.ToString());
+		public void Dispose()
+		{
+			_writer.Dispose();
 		}
 	}
 
