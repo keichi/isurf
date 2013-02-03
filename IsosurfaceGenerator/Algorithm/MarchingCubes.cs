@@ -374,73 +374,49 @@ namespace IsosurfaceGenerator
 						var lookup = 0;
 						var index = x + y * _sizeX + z * _sizeX * _sizeY;
 
-						if (vertices[index].IsInside) lookup |= 128;
-						if (vertices[index + 1].IsInside) lookup |= 64;
-						if (vertices[index + _sizeX].IsInside) lookup |= 8;
-						if (vertices[index + 1 + _sizeX].IsInside) lookup |= 4;
-						if (vertices[index + _sizeXY].IsInside) lookup |= 16;
-						if (vertices[index + 1 + _sizeXY].IsInside) lookup |= 32;
 						if (vertices[index + _sizeX + _sizeXY].IsInside) lookup |= 1;
 						if (vertices[index + 1 + _sizeX + _sizeXY].IsInside) lookup |= 2;
+						if (vertices[index + 1 + _sizeX].IsInside) lookup |= 4;
+						if (vertices[index + _sizeX].IsInside) lookup |= 8;
+						if (vertices[index + _sizeXY].IsInside) lookup |= 16;
+						if (vertices[index + 1 + _sizeXY].IsInside) lookup |= 32;
+						if (vertices[index + 1].IsInside) lookup |= 64;
+						if (vertices[index].IsInside) lookup |= 128;
 
-						if ((lookup != 0) && (lookup != 255))
-						{
-							// 0 - 1
+						if ((lookup != 0) && (lookup != 255)) {
 							if ((EDGE_TABLE[lookup] & 1) != 0) 
 								vertexList[0]= Vertex.Interpolate(vertices[index + _sizeX + _sizeXY],
 																		vertices[index + 1 + _sizeY + _sizeXY], _isoValue);
-							
-							// 1 - 2
 							if ((EDGE_TABLE[lookup] & 2) != 0) 
 								vertexList[1] = Vertex.Interpolate(vertices[index + 1 + _sizeX + _sizeXY],
 								                                       vertices[index + 1 + _sizeX], _isoValue);
-							
-							// 2 - 3
 							if ((EDGE_TABLE[lookup] & 4) != 0) 
 								vertexList[2] = Vertex.Interpolate(vertices[index + 1 + _sizeX],
 								                                  vertices[index + _sizeX], _isoValue);
-							
-							// 3 - 0
 							if ((EDGE_TABLE[lookup] & 8) != 0) 
 								vertexList[3] = Vertex.Interpolate(vertices[index + _sizeX],
 								                                  vertices[index + _sizeX + _sizeXY], _isoValue);
-							
-							// 4 - 5
 							if ((EDGE_TABLE[lookup] & 16) != 0) 
 								vertexList[4] = Vertex.Interpolate(vertices[index + _sizeXY],
 								                                  vertices[index + 1 + _sizeXY], _isoValue);
-							
-							// 5 - 6
 							if ((EDGE_TABLE[lookup] & 32) != 0) 
 								vertexList[5] = Vertex.Interpolate(vertices[index + 1 + _sizeXY],
 								                                  vertices[index + 1], _isoValue);
-							
-							// 6 - 7
 							if ((EDGE_TABLE[lookup] & 64) != 0) 
 								vertexList[6] = Vertex.Interpolate(vertices[index + 1],
 								                                  vertices[index], _isoValue);
-							
-							// 7 - 4
 							if ((EDGE_TABLE[lookup] & 128) != 0) 
 								vertexList[7] = Vertex.Interpolate(vertices[index],
 								                                  vertices[index + _sizeXY], _isoValue);
-							
-							// 0 - 4
 							if ((EDGE_TABLE[lookup] & 256) != 0)
 								vertexList[8] = Vertex.Interpolate(vertices[index + _sizeX + _sizeXY],
 								                                  vertices[index + _sizeXY], _isoValue);
-							
-							// 1 - 5
 							if ((EDGE_TABLE[lookup] & 512) != 0) 
 								vertexList[9] = Vertex.Interpolate(vertices[index + 1 + _sizeX + _sizeXY],
 								                                  vertices[index + 1 + _sizeXY], _isoValue);
-							
-							// 2 - 6
 							if ((EDGE_TABLE[lookup] & 1024) != 0) 
 								vertexList[10] = Vertex.Interpolate(vertices[index + 1 + _sizeX],
 								                                   vertices[index + 1], _isoValue);
-							
-							// 3 - 7
 							if ((EDGE_TABLE[lookup] & 2048) != 0) 
 								vertexList[11] = Vertex.Interpolate(vertices[index + _sizeX],
 								                                   vertices[index], _isoValue);
