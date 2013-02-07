@@ -52,7 +52,7 @@ namespace IsosurfaceGenerator
 		private static void processSingleFile(string filename, string outputPath, float[] isoValues)
 		{
 			Console.WriteLine ("====================");
-			Console.WriteLine ("Start processing CTL file \"{0}\"", filename);
+			Console.WriteLine ("CTLファイル\"{0}\"の処理を開始します。", filename);
 
 			var processor = new SingleFileProcessor(filename, outputPath, isoValues, MeshFileType.OBJ);
 			processor.Process();

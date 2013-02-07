@@ -63,28 +63,28 @@ namespace IsosurfaceGenerator
 			var reader = new GradsFileReader (_ctlPath);
 			using (var data = reader.ReadData()) {
 				sw.Stop ();
-				Debug.WriteLine ("Read/parsed GrADS file. ({0}[ms])", sw.ElapsedMilliseconds);
+				Debug.WriteLine ("GrADSファイルを読み込みました。 ({0}[ms])", sw.ElapsedMilliseconds);
 			
 				sw.Restart();
 				using (var mc = new MarchingCubes(data)) {
 					sw.Stop();
-					Debug.WriteLine("Initialized isosurface generator. ({0}[ms])", sw.ElapsedMilliseconds);
+					Debug.WriteLine("等値曲面生成エンジンを初期化しました。 ({0}[ms])", sw.ElapsedMilliseconds);
 
 					using (var exporter = MESH_EXPORTERS[_meshFileType](_meshPath)) {
 						foreach (var isoValue in _isoValues) {
-								sw.Restart();
-								mc.UpdateIsosurfaceValue(isoValue);
-								var mesh = mc.CalculateIsosurface();
-								sw.Stop();
-								Debug.WriteLine("Generated isosurface for value = {1}. ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
-								
-								sw.Restart();
-								exporter.Export(mesh, isoValue);
-								sw.Stop();
-								Debug.WriteLine("Wrote isosurface mesh data to \"{1}\". ({0}[ms])", sw.ElapsedMilliseconds, _meshPath);
-								Debug.WriteLine("Resulted in {0} triangles.", mesh.Count);
+							sw.Restart();
+							mc.UpdateIsosurfaceValue(isoValue);
+							var mesh = mc.CalculateIsosurface();
+							sw.Stop();
+							Debug.WriteLine("値{1}について等値曲面を生成しました。 ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
+							
+							sw.Restart();
+							exporter.Export(mesh, isoValue);
+							sw.Stop();
+                            Debug.WriteLine("{1}ポリゴンをファイルに出力した。 ({0}[ms])", sw.ElapsedMilliseconds, mesh.Count);
 						}
 					}
+                    Debug.WriteLine("メッシュデータを\"{0}\"に出力しました。", (object)_meshPath);
 				}
 			}
 		}
