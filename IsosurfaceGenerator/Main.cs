@@ -61,15 +61,15 @@ namespace IsosurfaceGenerator
 
 		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
-			if (args.Length < 1 || String.IsNullOrWhiteSpace(args[0])) {
+			if (args.Length < 1 || String.IsNullOrEmpty(args[0])) {
 				Console.WriteLine("Please specify a GrADS CTL file.");
 				return;
 			}
-			if (args.Length < 2 || String.IsNullOrWhiteSpace(args[1])) {
+			if (args.Length < 2 || String.IsNullOrEmpty(args[1])) {
 				Console.WriteLine("Please specify output path.");
 				return;
 			}
-			if (args.Length < 3 || String.IsNullOrWhiteSpace(args[2])) {
+			if (args.Length < 3 || String.IsNullOrEmpty(args[2])) {
 				Console.WriteLine("Please specify the value you want generate the isosurface.");
 				return;
 			}

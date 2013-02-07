@@ -63,28 +63,41 @@ namespace IsosurfaceGenerator
 			var reader = new GradsFileReader (_ctlPath);
 			using (var data = reader.ReadData()) {
 				sw.Stop ();
-				Debug.WriteLine ("GrADSファイルを読み込みました。 ({0}[ms])", sw.ElapsedMilliseconds);
-			
-				sw.Restart();
+				Debug.WriteLine (String.Format("GrADSファイルを読み込みました。 ({0}[ms])",
+					sw.ElapsedMilliseconds)
+				);
+
+				sw.Reset();
+				sw.Start();
 				using (var mc = new MarchingCubes(data)) {
 					sw.Stop();
-					Debug.WriteLine("等値曲面生成エンジンを初期化しました。 ({0}[ms])", sw.ElapsedMilliseconds);
+					Debug.WriteLine(String.Format("等値曲面生成エンジンを初期化しました。 ({0}[ms])",
+						sw.ElapsedMilliseconds)
+					);
 
 					using (var exporter = MESH_EXPORTERS[_meshFileType](_meshPath)) {
 						foreach (var isoValue in _isoValues) {
-							sw.Restart();
+							sw.Reset();
+							sw.Start();
 							mc.UpdateIsosurfaceValue(isoValue);
 							var mesh = mc.CalculateIsosurface();
 							sw.Stop();
-							Debug.WriteLine("値{1}について等値曲面を生成しました。 ({0}[ms])", sw.ElapsedMilliseconds, isoValue);
-							
-							sw.Restart();
+							Debug.WriteLine(String.Format("値{1}について等値曲面を生成しました。 ({0}[ms])",
+								sw.ElapsedMilliseconds,
+								isoValue)
+							);
+
+							sw.Reset();
+							sw.Start();
 							exporter.Export(mesh, isoValue);
 							sw.Stop();
-                            Debug.WriteLine("{1}ポリゴンをファイルに出力した。 ({0}[ms])", sw.ElapsedMilliseconds, mesh.Count);
+                            Debug.WriteLine(String.Format("{1}ポリゴンをファイルに出力した。 ({0}[ms])",
+								sw.ElapsedMilliseconds,
+								mesh.Count)
+							);
 						}
 					}
-                    Debug.WriteLine("メッシュデータを\"{0}\"に出力しました。", (object)_meshPath);
+                    Debug.WriteLine(String.Format("メッシュデータを\"{0}\"に出力しました。", _meshPath));
 				}
 			}
 		}

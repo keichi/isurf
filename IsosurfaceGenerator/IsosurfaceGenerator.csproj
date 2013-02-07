@@ -8,7 +8,9 @@
     <ProjectGuid>{9FD406E7-2BE7-4ACE-B46A-D87E8328DFAA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>IsosurfaceGenerator</RootNamespace>
-    <AssemblyName>IsosurfaceGenerator</AssemblyName>
+    <AssemblyName>isurf</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -51,8 +53,10 @@
     <Compile Include="Algorithm\PARData.cs" />
     <Compile Include="Importer\GradsFileReader.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsosurfaceGenerator", "IsosurfaceGenerator\IsosurfaceGenerator.csproj", "{9FD406E7-2BE7-4ACE-B46A-D87E8328DFAA}"
 EndProject
 Global
@@ -13,6 +13,9 @@ Global
 		{9FD406E7-2BE7-4ACE-B46A-D87E8328DFAA}.Debug|x86.Build.0 = Debug|x86
 		{9FD406E7-2BE7-4ACE-B46A-D87E8328DFAA}.Release|x86.ActiveCfg = Release|x86
 		{9FD406E7-2BE7-4ACE-B46A-D87E8328DFAA}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = IsosurfaceGenerator\IsosurfaceGenerator.csproj
