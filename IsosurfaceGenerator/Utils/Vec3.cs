@@ -4,21 +4,21 @@ using System.Runtime.InteropServices;
 namespace IsosurfaceGenerator.Utils
 {
 	/// <summary>
-	/// A 3-dimensional vector
+	/// 3次元ベクトルを表現するクラス
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Vec3
 	{
 		/// <summary>
-		/// x-component
+		/// X成分
 		/// </summary>
 		public float X;
 		/// <summary>
-		/// y-component
+		/// Y成分
 		/// </summary>
 		public float Y;
 		/// <summary>
-		/// z-component
+		/// Z成分
 		/// </summary>
 		public float Z;
 		
@@ -28,10 +28,20 @@ namespace IsosurfaceGenerator.Utils
 			Z = z;
 		}
 		
+		/// <summary>
+		/// 内積を求める
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns>内積の値</returns>
 		public float Dot(Vec3 v) {
 			return X * v.X + Y * v.Y + Z * v.Z;
 		}
 
+		/// <summary>
+		/// 外積を求める
+		/// </summary>
+		/// <param name="v2"></param>
+		/// <returns>外積ベクトル</returns>
 		public Vec3 Cross(Vec3 v2) {
 			Vec3 v;
 			v.X = Y * v2.Z - Z * v2.Y;
@@ -40,6 +50,10 @@ namespace IsosurfaceGenerator.Utils
 			return v;
 		}
 
+		/// <summary>
+		/// 正規化する
+		/// </summary>
+		/// <returns>正規化されたベクトル</returns>
 		public Vec3 Normalize() {
 			var length = (float)Math.Sqrt(Dot(this));
 			if (length == 0.0f) return this;

@@ -7,6 +7,7 @@ using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator.Exporter
 {
+	[Obsolete]
 	public class STLExporter : IMeshExporter
 	{
 		private string _filename;

@@ -6,23 +6,43 @@ using System.Runtime.InteropServices;
 namespace IsosurfaceGenerator
 {
 	/// <summary>
-	/// GrADS file parser/reader
+	/// GrADSファイルの読み込み処理を行うクラス
 	/// </summary>
 	public class GradsFileReader
 	{
+		/// <summary>
+		/// CTLファイルのパス
+		/// </summary>
 		private string _ctlFilename;
+		/// <summary>
+		/// DATファイルのパス
+		/// </summary>
 		private string _datFilename;
 		
+		/// <summary>
+		/// このクラスのオブジェクトを作成する
+		/// </summary>
+		/// <param name="ctlFilename">読み込むCTLファイルのパス</param>
 		public GradsFileReader (string ctlFilename)
 		{
 			_ctlFilename = ctlFilename;
 		}
 
+		/// <summary>
+		/// このクラスのオブジェクトを作成する
+		/// </summary>
+		/// <param name="ctlFilename">読み込むCTLファイルのパス</param>
+		/// <param name="datFilename">読み込むDATファイルのパス</param>
 		public GradsFileReader (string ctlFilename, string datFilename) : this(ctlFilename)
 		{
 			_datFilename = datFilename;
 		}
 
+		/// <summary>
+		/// DATファイルから格子点のデータを読み込む
+		/// </summary>
+		/// <param name="datFilename">DATファイルのパス</param>
+		/// <param name="data">読み込んだデータを格納するPARDataオブジェクト</param>
 		private void readDataset(string datFilename, PARData data) {
 			var sizeX = data.SizeX;
 			var sizeY = data.SizeY;
@@ -43,11 +63,14 @@ namespace IsosurfaceGenerator
 			data.RawData = rawData;
 		}
 
+		/// <summary>
+		//	CTLファイル・DATファイルからデータを読み込む
+		/// </summary>
+		/// <returns>読み込んだデータを格納したPARDataクラス</returns>
 		public PARData ReadData ()
 		{
 			var data = new PARData();
 
-			// Read contents of CTL file
 			using (var reader = new StreamReader(_ctlFilename)) {
 				string line;
 				var regex = new Regex(@"\s+");

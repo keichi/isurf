@@ -6,14 +6,15 @@ using IsosurfaceGenerator.Utils;
 namespace IsosurfaceGenerator.Exporter
 {
 	/// <summary>
-	/// Interface of mesh exporters
+	/// メッシュデータをエクスポートするクラスのインターフェース
 	/// </summary>
 	public interface IMeshExporter : IDisposable
 	{
 		/// <summary>
-		/// Export the given mesh data to a file
+		/// メッシュをファイルへエクスポートする
 		/// </summary>
-		/// <param name="triangles">Triangles.</param>
+		/// <param name="triangles">メッシュデータ</param>
+		/// <param name="isoValue">等値曲面の値</param>
 		void Export(List<Triangle> triangles, float isoValue);
 	}
 }

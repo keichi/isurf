@@ -8,10 +8,22 @@ using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator.Exporter
 {
+	/// <summary>
+	/// メッシュデータをOBJファイルとしてエクスポートするクラス
+	/// </summary>
 	public class OBJExporter : IMeshExporter
 	{
+		/// <summary>
+		/// 出力ファイルのStreamWriter
+		/// </summary>
 		private StreamWriter _writer;
+		/// <summary>
+		/// 現在最大の頂点インデックス
+		/// </summary>
 		private int _verticesCount = 1;
+		/// <summary>
+		/// 現在最大の頂点法線ベクトルインデックス
+		/// </summary>
 		private int _normalVecsCount = 1;
 
 		private OBJExporter()
@@ -23,14 +35,21 @@ namespace IsosurfaceGenerator.Exporter
 			_writer = new StreamWriter(filename);
 		}
 
+		/// <summary>
+		/// メッシュをファイルへエクスポートする
+		/// </summary>
+		/// <param name="triangles">メッシュデータ</param>
+		/// <param name="isoValue">等値曲面の値</param>
 		public void Export(List<Triangle> triangles, float isoValue)
 		{
+			// 頂点と頂点インデックスの辞書
 			var dict = new Dictionary<Vec3, int>();
 			_writer.WriteLine("g " + isoValue.ToString());
 
 			foreach(var triangle in triangles) {
 				var vertex1 = triangle.Vertex1;
 				if (!dict.ContainsKey(vertex1)) {
+					// 以下_writer.WriteLineを使用していないのは、パフォーマンス上の理由
 					dict.Add(vertex1, _verticesCount++);
 					_writer.Write("v ");
 					_writer.Write(vertex1.X);

@@ -7,6 +7,9 @@ using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator
 {
+	/// <summary>
+	/// Marchings Cubes法による等値曲面の生成を行うクラス
+	/// </summary>
 	public class MarchingCubes : IDisposable
 	{
 		#region EDGE_TABLE
@@ -316,6 +319,7 @@ namespace IsosurfaceGenerator
 
 		public MarchingCubes (PARData data)
 		{
+			// 以下プロパティアクセスによるパフォーマンス低下を避けるためのコード
 			_sizeX = data.SizeX;
 			_sizeY = data.SizeY;
 			_sizeZ = data.SizeZ;
@@ -331,6 +335,7 @@ namespace IsosurfaceGenerator
 			_verticesBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 			GC.AddMemoryPressure(Marshal.SizeOf(typeof(Vertex)) * _sizeX * _sizeY * _sizeZ);
 
+			// unsafeを用いることによりパフォーマンス向上
 			unsafe {
 				var vptr = (Vertex*)_verticesBuffer.ToPointer();
 				var ptr = (float*)rawData.ToPointer();
@@ -351,6 +356,13 @@ namespace IsosurfaceGenerator
 			}
 		}
 
+		/// <summary>
+		/// 指定された等値曲面の値で更新する
+		/// </summary>
+		/// <remarks>
+		/// CalculateIsosurfaceを呼ぶ前に必ずこのメソッドを呼ぶこと
+		/// </remarks>
+		/// <param name="isoValue">等値曲面の値</param>
 		public unsafe void UpdateIsosurfaceValue(float isoValue)
 		{
 			_isoValue = isoValue;
@@ -362,9 +374,15 @@ namespace IsosurfaceGenerator
 			}
 		}
 
+		/// <summary>
+		/// 等値曲面を計算する
+		/// </summary>
+		/// <returns>等値曲面を構成する三角形の配列</returns>
 		public unsafe List<Triangle> CalculateIsosurface ()
 		{
+			// 等値曲面を構成するポリゴンの動的配列
 			var triangles = new List<Triangle>();
+			// ポリゴンを構成する座標の配列
 			var vertexList = new Vertex[12];
 			var vertices = (Vertex*)_verticesBuffer.ToPointer();
 
@@ -374,6 +392,7 @@ namespace IsosurfaceGenerator
 						var lookup = 0;
 						var index = x + y * _sizeX + z * _sizeX * _sizeY;
 
+						// 等値曲面の内側に存在する頂点を検索する
 						if (vertices[index + _sizeX + _sizeXY].IsInside) lookup |= 1;
 						if (vertices[index + 1 + _sizeX + _sizeXY].IsInside) lookup |= 2;
 						if (vertices[index + 1 + _sizeX].IsInside) lookup |= 4;
@@ -383,6 +402,7 @@ namespace IsosurfaceGenerator
 						if (vertices[index + 1].IsInside) lookup |= 64;
 						if (vertices[index].IsInside) lookup |= 128;
 
+						// 全ての頂点が等値曲面の内側・外側に存在しないときのみ
 						if ((lookup != 0) && (lookup != 255)) {
 							if ((EDGE_TABLE[lookup] & 1) != 0) 
 								vertexList[0]= Vertex.Interpolate(vertices[index + _sizeX + _sizeXY],

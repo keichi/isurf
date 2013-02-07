@@ -2,12 +2,29 @@ using System;
 
 namespace IsosurfaceGenerator.Utils
 {
+	// 格子点の各点を表現する構造体
 	public struct Vertex
 	{
+		/// <summary>
+		/// 座標
+		/// </summary>
 		public Vec3 Point;
+		/// <summary>
+		/// 格子点の持つ値
+		/// </summary>
 		public float Value;
+		/// <summary>
+		/// 格子点が等値曲面の内側に存在するか
+		/// </summary>
 		public bool IsInside;
 
+		/// <summary>
+		/// 2つのVertexを内分するVertexを求める
+		/// </summary>
+		/// <param name="v1">1つ目のVertex</param>
+		/// <param name="v2">2つ目のVertex</param>
+		/// <param name="isoValue">等値曲面の値</param>
+		/// <returns>内分されたVertex</returns>
 		public static Vertex Interpolate(Vertex v1, Vertex v2, float isoValue) {
 			if (Math.Abs(isoValue - v1.Value) < 0.00001f) {
 				return v1;

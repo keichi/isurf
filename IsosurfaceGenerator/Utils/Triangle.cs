@@ -4,25 +4,22 @@ using System.Runtime.InteropServices;
 namespace IsosurfaceGenerator.Utils
 {
 	/// <summary>
-	/// A 3-dimensional triangle
+	/// 3次元空間内の三角形を表現する構造体
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Triangle
 	{
 		/// <summary>
-		/// 1st vertex
+		/// 1つ目の頂点
 		/// </summary>
-		/// <value>The vertex1.</value>
 		public Vec3 Vertex1;
 		/// <summary>
-		/// 2nd vertex
+		/// 2つ目の頂点
 		/// </summary>
-		/// <value>The vertex2.</value>
 		public Vec3 Vertex2;
 		/// <summary>
-		/// 3rd vertex
+		/// 3つ目の頂点
 		/// </summary>
-		/// <value>The vertex3.</value>
 		public Vec3 Vertex3;
 
 		public Triangle (Vec3 v1, Vec3 v2, Vec3 v3)

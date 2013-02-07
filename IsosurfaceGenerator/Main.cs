@@ -10,8 +10,15 @@ using IsosurfaceGenerator.Exporter;
 
 namespace IsosurfaceGenerator
 {
+	/// <summary>
+	/// プログラムのエントリーポイントの存在するクラス
+	/// </summary>
 	class MainClass
 	{
+		/// <summary>
+		/// プログラムのエントリーポイント
+		/// </summary>
+		/// <param name="args">コマンドライン引数</param>
 		public static void Main (string[] args)
 		{
 			initializeProgram();
