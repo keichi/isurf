@@ -8,3 +8,7 @@ obj/
 test-results/
 *~
 .DS_Store
+
+*.sublime-workspace
+
+*.sublime-project
