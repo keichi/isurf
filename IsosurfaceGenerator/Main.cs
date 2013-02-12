@@ -39,7 +39,7 @@ namespace IsosurfaceGenerator
 					    processSingleFile(file, outputPath, isoValues);
                     }
                     catch (Exception ex) {
-                        Console.WriteLine("ファイル\"{0}\"の処理中にエラーが発生しました:");
+                        Console.WriteLine("ファイル\"{0}\"の処理中にエラーが発生しました:", file);
                         Console.WriteLine(ex.Message);
                     }
 				}
@@ -50,7 +50,8 @@ namespace IsosurfaceGenerator
 		{
 			Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
 			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
-				Debug.WriteLine(e.ExceptionObject.ToString());
+                Console.WriteLine("回復不能なエラーが発生しました:");
+                Console.WriteLine(e.ExceptionObject);
 				Environment.Exit(-1);
 			};
 		}
