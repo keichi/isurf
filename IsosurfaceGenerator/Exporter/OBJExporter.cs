@@ -46,6 +46,7 @@ namespace IsosurfaceGenerator.Exporter
 			var dict = new Dictionary<Vec3, int>();
 			_writer.WriteLine("g " + isoValue.ToString());
 
+			// 全てのポリゴンの3つの頂点を書き出す
 			foreach(var triangle in triangles) {
 				var vertex1 = triangle.Vertex1;
 				if (!dict.ContainsKey(vertex1)) {
@@ -85,6 +86,7 @@ namespace IsosurfaceGenerator.Exporter
 				}
 			}
 
+			// 全てのポリゴンの法線ベクトルを書き出す
 			foreach(var triangle in triangles) {
 				_normalVecsCount++;
 				var normal = (triangle.Vertex3 - triangle.Vertex1).Cross (triangle.Vertex2 - triangle.Vertex1).Normalize ();
@@ -97,6 +99,7 @@ namespace IsosurfaceGenerator.Exporter
 				_writer.WriteLine();
 			}
 
+			// ポリゴンの定義を行う
 			for (var i = 0; i < triangles.Count; i++) {
 				var i1 = dict[triangles[i].Vertex1];
 				var i2 = dict[triangles[i].Vertex2];

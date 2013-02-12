@@ -44,20 +44,25 @@ namespace IsosurfaceGenerator
 		/// <param name="datFilename">DATファイルのパス</param>
 		/// <param name="data">読み込んだデータを格納するPARDataオブジェクト</param>
 		private void readDataset(string datFilename, PARData data) {
+			// プロパティアクセスによるオーバーヘッドを抑えるため、ローカル変数にキャッシュしておく
 			var sizeX = data.SizeX;
 			var sizeY = data.SizeY;
 			var sizeZ = data.SizeZ;
+			// 全ての格子点の数 * 4バイト(floatのサイズ)
 			var bufSize = sizeX * sizeY * sizeZ * 4;
 			var rawData = Marshal.AllocHGlobal(bufSize);
 			var buf = new byte[bufSize];
 			GC.AddMemoryPressure(bufSize);
 		
-			// Read contents of DAT file
+			// データセットを読み込む
+			// BinaryReaderはbyte配列への読み込みにしか対応していないので、まずはbyte配列に書き出す
 			using (var reader = new BinaryReader(File.OpenRead(_datFilename))) {
 				reader.Read(buf, 0, buf.Length);
 			}
 
+			// バッファの中身をfloat配列へコピーする
 			Marshal.Copy(buf, 0, rawData, buf.Length);
+			// GCが働くように
 			buf = null;
 
 			data.RawData = rawData;
@@ -73,31 +78,39 @@ namespace IsosurfaceGenerator
 
 			using (var reader = new StreamReader(_ctlFilename)) {
 				string line;
+
+				// 区切り文字に対応する正規表現
 				var regex = new Regex(@"\s+");
 				while ((line = reader.ReadLine()) != null) {
 					var cols = regex.Split(line);
 					switch (cols[0].ToUpper()) {
+					// X軸の情報
 					case "XDEF":
 						data.SizeX = int.Parse(cols[1]);
 						data.StartX = float.Parse(cols[3]);
 						data.StepX = float.Parse(cols[4]);
 						break;
+					// Y軸の情報
 					case "YDEF":
 						data.SizeY = int.Parse(cols[1]);
 						data.StartY = float.Parse(cols[3]);
 						data.StepY = float.Parse(cols[4]);
 						break;
+					// Z軸の情報
 					case "ZDEF":
 						data.SizeZ = int.Parse(cols[1]);
 						data.StartZ = float.Parse(cols[3]);
 						data.StepZ = float.Parse(cols[4]);
 						break;
+					// データが無い領域の値
 					case "UNDEF":
 						data.NoDataValue = float.Parse(cols[1]);
 						break;
+					// データセットのパス
 					case "DSET":
 						if (!String.IsNullOrEmpty(_datFilename)) break;
 						var dset = cols[1];
+						// ^で始まる場合は、データセットはctlファイルからの相対パスとなる
 						if (dset.StartsWith("^")) {
 							dset = dset.Substring(1);
 							_datFilename = Path.Combine(Path.GetDirectoryName(_ctlFilename), dset);
@@ -109,6 +122,7 @@ namespace IsosurfaceGenerator
 				}
 			}
 
+			// データセットを読み込み
 			readDataset(_datFilename, data);
 
 			return data;

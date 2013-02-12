@@ -369,6 +369,7 @@ namespace IsosurfaceGenerator
 			var vptr = (Vertex*)_verticesBuffer.ToPointer();
 			var size = _sizeX * _sizeY * _sizeZ;
 			for (var i = 0; i < size; i++) {
+				// 格子点における値がisoValueより大きければ、等値曲面の内側に存在する
 				vptr->IsInside = vptr->Value > isoValue;
 				vptr++;
 			}
@@ -441,6 +442,7 @@ namespace IsosurfaceGenerator
 								vertexList[11] = Vertex.Interpolate(vertices[index + _sizeX],
 								                                   vertices[index], _isoValue);
 
+							// 三角形ポリゴンを生成していく
 							for (var i = 0; i < TRI_TABLE[lookup].Length; i += 3) {
 								triangles.Add(new Triangle(
 									vertexList[TRI_TABLE[lookup][i]].Point,

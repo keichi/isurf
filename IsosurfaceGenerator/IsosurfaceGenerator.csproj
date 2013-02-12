@@ -20,7 +20,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Commandlineparameters>/Users/keichi/Downloads/pawr3D_20120722 30.0</Commandlineparameters>
+    <Commandlineparameters>/Users/keichi/Downloads/pawr3D_20120722 /Users/keichi/Downloads/pawr3D_20120722 25.0 30.0 40.0</Commandlineparameters>
     <Externalconsole>True</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
