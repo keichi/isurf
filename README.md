@@ -1,4 +1,6 @@
 #Isosurface Generatorマニュアル
+of Isosurface Generator v1.0, by Keichi Takahashi (<keichi.t@me.com>)
+
 ##概要
 Isosurface Generatorは、GrADS用フォーマットで格納された3次元空間内の格子点のデータを入力として受け取り、
 特定の値に対する等値曲面のメッシュデータ出力するプログラムです。
@@ -93,4 +95,6 @@ Isosurface Generatorは、GrADS用フォーマットで格納された3次元空
 	- 処理を続行できないエラーが発生しました。表示されているエラーをご連絡ください。
 
 ##入力データ・出力データ
+
+Copyright © 2013 Keichi Takahashi. All Rights Reserved.
 
