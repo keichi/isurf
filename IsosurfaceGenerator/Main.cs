@@ -62,15 +62,15 @@ namespace IsosurfaceGenerator
 		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
 			if (args.Length < 1 || String.IsNullOrEmpty(args[0])) {
-				Console.WriteLine("Please specify a GrADS CTL file.");
+				Console.WriteLine("GrADS CTLファイル、あるいはCTLファイルを含むディレクトリを指定してください。");
 				return;
 			}
 			if (args.Length < 2 || String.IsNullOrEmpty(args[1])) {
-				Console.WriteLine("Please specify output path.");
+				Console.WriteLine("出力ディレクトリを指定してください。");
 				return;
 			}
 			if (args.Length < 3 || String.IsNullOrEmpty(args[2])) {
-				Console.WriteLine("Please specify the value you want generate the isosurface.");
+				Console.WriteLine("等値曲面を生成する値の指定してください。(複数可)");
 				return;
 			}
 			ctlPath = args[0];
