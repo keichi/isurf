@@ -35,7 +35,13 @@ namespace IsosurfaceGenerator
 			} else if(Directory.Exists(ctlPath)) {
 				var files = Directory.GetFiles(ctlPath, "*.ctl");
 				foreach (var file in files) {
-					processSingleFile(file, outputPath, isoValues);
+                    try {
+					    processSingleFile(file, outputPath, isoValues);
+                    }
+                    catch (Exception ex) {
+                        Console.WriteLine("ファイル\"{0}\"の処理中にエラーが発生しました:");
+                        Console.WriteLine(ex.Message);
+                    }
 				}
 			}
 		}
@@ -51,7 +57,7 @@ namespace IsosurfaceGenerator
 
 		private static void processSingleFile(string filename, string outputPath, float[] isoValues)
 		{
-			Console.WriteLine ("====================");
+            Console.WriteLine ("========================================");
 			Console.WriteLine ("CTLファイル\"{0}\"の処理を開始します。", filename);
 
 			var processor = new SingleFileProcessor(filename, outputPath, isoValues, MeshFileType.OBJ);
@@ -63,19 +69,27 @@ namespace IsosurfaceGenerator
 		{
 			if (args.Length < 1 || String.IsNullOrEmpty(args[0])) {
 				Console.WriteLine("GrADS CTLファイル、あるいはCTLファイルを含むディレクトリを指定してください。");
-				return;
+                Environment.Exit(-1);
 			}
 			if (args.Length < 2 || String.IsNullOrEmpty(args[1])) {
 				Console.WriteLine("出力ディレクトリを指定してください。");
-				return;
+                Environment.Exit(-1);
 			}
 			if (args.Length < 3 || String.IsNullOrEmpty(args[2])) {
-				Console.WriteLine("等値曲面を生成する値の指定してください。(複数可)");
-				return;
+                Console.WriteLine("等値曲面を生成する値を指定してください。(複数可)");
+                Environment.Exit(-1);
 			}
 			ctlPath = args[0];
 			outputPath = args[1];
-			isoValues = args.Skip(2).Select(s => float.Parse(s)).ToArray();
+
+            try {
+    			isoValues = args.Skip(2).Select(s => float.Parse(s)).ToArray();
+            }
+            catch(FormatException ex) {
+                Console.WriteLine("等値曲面を生成する値の指定が間違っています:");
+                Console.WriteLine(ex.Message);
+                Environment.Exit(-1);
+            }
 		}
 
 		private static void printCopyrights()
