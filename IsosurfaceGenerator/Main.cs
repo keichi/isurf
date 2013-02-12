@@ -68,16 +68,9 @@ namespace IsosurfaceGenerator
 
 		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
-			if (args.Length < 1 || String.IsNullOrEmpty(args[0])) {
-				Console.WriteLine("GrADS CTLファイル、あるいはCTLファイルを含むディレクトリを指定してください。");
-                Environment.Exit(-1);
-			}
-			if (args.Length < 2 || String.IsNullOrEmpty(args[1])) {
-				Console.WriteLine("出力ディレクトリを指定してください。");
-                Environment.Exit(-1);
-			}
-			if (args.Length < 3 || String.IsNullOrEmpty(args[2])) {
-                Console.WriteLine("等値曲面を生成する値を指定してください。(複数可)");
+			if (args.Length < 3) {
+                Console.WriteLine("コマンドライン引数が足りません: ");
+                Console.WriteLine("isurf.exe 入力ファイル/ディレクトリ 出力ディレクトリ 値1 [値2] [値3] […]");
                 Environment.Exit(-1);
 			}
 			ctlPath = args[0];
