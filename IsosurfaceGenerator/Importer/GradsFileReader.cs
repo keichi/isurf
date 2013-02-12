@@ -50,8 +50,13 @@ namespace IsosurfaceGenerator
 			var sizeZ = data.SizeZ;
 			// 全ての格子点の数 * 4バイト(floatのサイズ)
 			var bufSize = sizeX * sizeY * sizeZ * 4;
+			// 格子点における値を格納する配列を確保
+			// あえてアンマネージドメモリから確保するのは、古い.NETのバージョンにおいてLOH(Large Object Heap)が
+			// フラグメンテーションするのを防ぐため。また若干アロケーションにかかる時間も短縮される
 			var rawData = Marshal.AllocHGlobal(bufSize);
+			// BinaryReaderは直接IntPtrの指すメモリへ読み込めないため、byte配列を経由する
 			var buf = new byte[bufSize];
+			// GCへアンマネージドメモリからメモリを確保したことを通知する
 			GC.AddMemoryPressure(bufSize);
 		
 			// データセットを読み込む
