@@ -62,6 +62,10 @@ namespace IsosurfaceGenerator
 			}
 		}
 
+        /// <summary>
+        /// 初期化を行う。<para/>
+        /// キャッチされなかった例外ハンドラを追加する。
+        /// </summary>
 		private static void initializeProgram()
 		{
 			Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
@@ -72,6 +76,12 @@ namespace IsosurfaceGenerator
 			};
 		}
 
+        /// <summary>
+        /// １つCTLファイルの処理を行う。
+        /// </summary>
+        /// <param name="filename">CTLファイル名</param>
+        /// <param name="outputPath">出力ディレクトリ</param>
+        /// <param name="isoValues">等値曲面の値の配列</param>
 		private static void processSingleFile(string filename, string outputPath, float[] isoValues)
 		{
             Console.WriteLine ("========================================");
@@ -82,6 +92,13 @@ namespace IsosurfaceGenerator
 			processor = null;
 		}
 
+        /// <summary>
+        /// コマンドライン引数を解析する。
+        /// </summary>
+        /// <param name="args">コマンドライン引数</param>
+        /// <param name="ctlPath">CTLファイルのパス</param>
+        /// <param name="outputPath">出力ディレクトリ</param>
+        /// <param name="isoValues">等値曲面の値の配列</param>
 		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
 			if (args.Length < 3) {
@@ -102,6 +119,9 @@ namespace IsosurfaceGenerator
             }
 		}
 
+        /// <summary>
+        /// 著作権情報を表示する。
+        /// </summary>
 		private static void printCopyrights()
 		{
 			Console.WriteLine("Isosurface Generator {0}\n{1}\n",

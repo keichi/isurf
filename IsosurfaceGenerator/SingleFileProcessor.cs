@@ -29,17 +29,37 @@ namespace IsosurfaceGenerator
 		OBJ,
 	}
 
+    /// <summary>
+    /// Single file processor.
+    /// </summary>
 	public class SingleFileProcessor
 	{
+        /// <summary>
+        /// メッシュデータのフォーマット
+        /// </summary>
 		private MeshFileType _meshFileType;
-		private string _ctlPath;
+		/// <summary>
+        /// CTLファイルのパス
+        /// </summary>
+        private string _ctlPath;
+        /// <summary>
+        /// メッシュファイルのパス
+        /// </summary>
 		private string _meshPath;
+        /// <summary>
+        /// 等値曲面の値の配列
+        /// </summary>
 		private float[] _isoValues;
-
+        /// <summary>
+        /// メッシュファイルのフォーマットと、拡張子の辞書
+        /// </summary>
 		private Dictionary<MeshFileType, string> MESH_FILE_EXTENSIONS = new Dictionary<MeshFileType, string>() {
 			{MeshFileType.OBJ, ".obj"},
 			{MeshFileType.STL, ".stl"},
 		};
+        /// <summary>
+        /// メッシュファイルのフォーマットと、エクスポータのファクトリラムダ関数の辞書
+        /// </summary>
 		private Dictionary<MeshFileType, Func<string, IMeshExporter>> MESH_EXPORTERS = new Dictionary<MeshFileType, Func<string, IMeshExporter>>() {
 			{MeshFileType.OBJ, s => new OBJExporter(s)},
 			{MeshFileType.STL, s => new STLExporter(s)},
