@@ -1,5 +1,5 @@
 #Isosurface Generatorマニュアル
-of Isosurface Generator v1.0, by Keichi Takahashi (<keichi.t@me.com>)
+for Isosurface Generator v1.0, by Keichi Takahashi (<keichi.t@me.com>)
 
 ##概要
 Isosurface Generatorは、GrADS用フォーマットで格納された3次元空間内の格子点のデータを入力として受け取り、
@@ -17,7 +17,9 @@ Isosurface Generatorは、GrADS用フォーマットで格納された3次元空
 
 (以下では動作環境がWindowsであるとしてご説明いたします。)
 
-##インストール
+##インストール方法
+ディレクトリbin以下の、
+
 - isurf.exe
 - isurf.exe.config
 
@@ -95,6 +97,26 @@ Isosurface Generatorは、GrADS用フォーマットで格納された3次元空
 	- 処理を続行できないエラーが発生しました。表示されているエラーをご連絡ください。
 
 ##入力データ・出力データ
+###入力データ
+入力データは、GrADS(Grid Analysis And Display System)にて読み込めるGrADS Grid Dataフォーマットを
+想定しています。このフォーマットの詳細については、[この](http://www.iges.org/grads/gadoc/descriptorfile.html)ページを参考にしてプログラムを作成しています。
+
+###出力データ
+生成されたメッシュデータは、Wavefront OBJフォーマットでファイルとして出力されます。各値の等値曲面のメッシュは、
+個別のオブジェクトグループとして出力されます。それぞれのグループの名前は、等値曲面の値となっています。
+当方の環境では、Blender 2.65aとMeshLab 1.3.2_64bitにて表示確認を行っています。
+
+##技術的な詳細
+このプログラムは、Mac OSX 10.8.2上のMono 2.10とMono Develop 3.1を用いて開発しました。
+Windowsでのビルド・テストの際は、Windows 7 64bit (JPN)上のVisual Studio 2012 Professional Edition、
+および.NET Framework 3.5を用いました。開発言語はC#で、依存する外部のライブラリなどは.NET Framework
+・Monoを除いてありません。C# 3.0の機能までを使用しているため、Visual Studio 2008以降でビルドが
+可能です。
+
+等値曲面を求めるアルゴリズムとしては、Lorensen ClineがSIGGRAPH '87で発表したMarching Cubes法を
+用いています。
+
+---
 
 Copyright © 2013 Keichi Takahashi. All Rights Reserved.
 
