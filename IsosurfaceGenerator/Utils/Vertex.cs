@@ -18,7 +18,9 @@ using System;
 
 namespace IsosurfaceGenerator.Utils
 {
-	// 格子点の各点を表現する構造体
+	/// <summary>
+	/// 1つの格子点を表現する構造体
+	/// </summary>
 	public struct Vertex
 	{
 		/// <summary>

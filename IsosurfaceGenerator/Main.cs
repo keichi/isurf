@@ -42,13 +42,16 @@ namespace IsosurfaceGenerator
 
 			var ctlPath = "";
 			var outputPath = "";
-			var isoValues = new float[] {};
+			var isoValues = (float[])Enumerable.Empty<float>();
 
+			// コマンドライン引数を解析する
 			parseCommandLineArgs(args, ref ctlPath, ref outputPath, ref isoValues);
 
 			if (File.Exists(ctlPath)) {
+				// もしctlPathがファイルへのパスなら
 				processSingleFile(ctlPath, outputPath, isoValues);
 			} else if(Directory.Exists(ctlPath)) {
+				// もしctlPathがディレクトリへのパスなら
 				var files = Directory.GetFiles(ctlPath, "*.ctl");
 				foreach (var file in files) {
                     try {
@@ -69,6 +72,8 @@ namespace IsosurfaceGenerator
 		private static void initializeProgram()
 		{
 			Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
+			// 現在のAppDomainへ例外ハンドラを追加
 			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
                 Console.WriteLine("回復不能なエラーが発生しました:");
                 Console.WriteLine(e.ExceptionObject);
@@ -89,6 +94,7 @@ namespace IsosurfaceGenerator
 
 			var processor = new SingleFileProcessor(filename, outputPath, isoValues, MeshFileType.OBJ);
 			processor.Process();
+			// あまり意味がない
 			processor = null;
 		}
 
@@ -101,6 +107,7 @@ namespace IsosurfaceGenerator
         /// <param name="isoValues">等値曲面の値の配列</param>
 		private static void parseCommandLineArgs(string[] args, ref string ctlPath, ref string outputPath, ref float[] isoValues)
 		{
+			// コマンドライン引数が足りないとき
 			if (args.Length < 3) {
                 Console.WriteLine("コマンドライン引数が足りません: ");
                 Console.WriteLine("isurf.exe 入力ファイル/ディレクトリ 出力ディレクトリ 値1 [値2] [値3] […]");
@@ -108,9 +115,10 @@ namespace IsosurfaceGenerator
 			}
 			ctlPath = args[0];
 			outputPath = args[1];
-
+            
             try {
-    			isoValues = args.Skip(2).Select(s => float.Parse(s)).ToArray();
+            	// 第三引数以降をfloatへパースする
+    			isoValues = args.Skip(2).Select(float.Parse).ToArray();
             }
             catch(FormatException ex) {
                 Console.WriteLine("等値曲面を生成する値の指定が間違っています:");
@@ -124,6 +132,7 @@ namespace IsosurfaceGenerator
         /// </summary>
 		private static void printCopyrights()
 		{
+			// AssemblyInfo.csで設定しているバージョン情報などを取得する
 			Console.WriteLine("Isosurface Generator {0}\n{1}\n",
 			                  Assembly.GetExecutingAssembly().GetName().Version,
 			                  ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute))).Copyright

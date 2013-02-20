@@ -24,6 +24,9 @@ using IsosurfaceGenerator.Utils;
 
 namespace IsosurfaceGenerator
 {
+    /// <summary>
+    /// メッシュデータファイルの種類を表す列挙体
+    /// </summary>
 	public enum MeshFileType {
 		STL,
 		OBJ,
@@ -65,11 +68,25 @@ namespace IsosurfaceGenerator
 			{MeshFileType.STL, s => new STLExporter(s)},
 		};
 
+        /// <summary>
+        /// このクラスのオブジェクトを作成する
+        /// </summary>
+        /// <param name="ctlPath">CTLファイルのパス</param>
+        /// <param name="outputPath">出力ディレクトリのパス</param>
+        /// <param name="isoValue">等値曲面の値</param>
+        /// <param name="meshFileType">メッシュデータの形式</param>
 		public SingleFileProcessor (string ctlPath, string outputPath, float isoValue, MeshFileType meshFileType)
 			: this(ctlPath, outputPath, new float[] {isoValue}, meshFileType)
 		{
 		}
 
+        /// <summary>
+        /// このクラスのオブジェクトを作成する
+        /// </summary>
+        /// <param name="ctlPath">CTLファイルのパス</param>
+        /// <param name="outputPath">出力ディレクトリのパス</param>
+        /// <param name="isoValue">等値曲面の値</param>
+        /// <param name="meshFileType">メッシュデータの形式</param>
 		public SingleFileProcessor (string ctlPath, string outputPath, float[] isoValues, MeshFileType meshFileType)
 		{
 			_meshFileType = meshFileType;
@@ -77,40 +94,56 @@ namespace IsosurfaceGenerator
 			_meshPath = getMeshPath(outputPath, ctlPath);
 			_isoValues = isoValues;
 			
+			// もし出力ディレクトリが存在していなければ作成する
 			if (!Directory.Exists(outputPath)) {
 				Directory.CreateDirectory(outputPath);
 			}
 		}
 
+        /// <summary>
+        /// 出力メッシュファイルのパスを取得する
+        /// </summary>
+        /// <returns>The mesh path.</returns>
+        /// <param name="outputPath">出力ディレクトリのパス</param>
+        /// <param name="ctlFilename">CTLファイルのパス</param>
 		private string getMeshPath(string outputPath, string ctlFilename) {
+			// 出力ディレクトリに拡張子を除いたCTLファイル名を連結する
 			var meshFilename = Path.Combine(
 				outputPath,
 				Path.GetFileNameWithoutExtension(ctlFilename)
 				);
+			// さらに現在のメッシュデータ形式の拡張子を連結する
 			meshFilename += MESH_FILE_EXTENSIONS[_meshFileType];
 			
 			return meshFilename;
 		}
 
-		public void Process ()
+        /// <summary>
+        /// 1つのCTLファイルを処理する
+        /// </summary>
+		public void Process()
 		{
 			var sw = new Stopwatch ();
 			sw.Start ();
-			var reader = new GradsFileReader (_ctlPath);
+			// GrADSファイルのパーサを初期化する
+			var reader = new GradsFileReader(_ctlPath);
+			// GrADSファイルをパースし、データを読み込む
 			using (var data = reader.ReadData()) {
 				sw.Stop ();
-				Console.WriteLine (String.Format("GrADSファイルを読み込みました。 ({0}[ms])",
+				Console.WriteLine(String.Format("GrADSファイルを読み込みました。 ({0}[ms])",
 					sw.ElapsedMilliseconds)
 				);
 
 				sw.Reset();
 				sw.Start();
+				// Marching Cubes法エンジンを初期化する
 				using (var mc = new MarchingCubes(data)) {
 					sw.Stop();
 					Console.WriteLine(String.Format("等値曲面生成エンジンを初期化しました。 ({0}[ms])",
 						sw.ElapsedMilliseconds)
 					);
 
+					// 現在のメッシュデータ形式に体するエクスポータクラスのインスタンスを取得する
 					using (var exporter = MESH_EXPORTERS[_meshFileType](_meshPath)) {
 						foreach (var isoValue in _isoValues) {
 							sw.Reset();
